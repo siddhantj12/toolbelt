@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.iterables import batched, chunk_by, dedupe
+from toolbelt.iterables import batched, chunk_by, dedupe, windowed
 
 
 class TestBatched:
@@ -50,3 +50,27 @@ class TestChunkBy:
 
     def test_falsy_first_item_still_starts_a_group(self):
         assert list(chunk_by([0, 0, 1], key=lambda n: n)) == [[0, 0], [1]]
+
+
+class TestWindowed:
+    def test_slides_by_one(self):
+        assert list(windowed([1, 2, 3, 4], 2)) == [[1, 2], [2, 3], [3, 4]]
+
+    def test_size_one_yields_singletons(self):
+        assert list(windowed([1, 2, 3], 1)) == [[1], [2], [3]]
+
+    def test_size_equal_to_length_yields_one_window(self):
+        assert list(windowed([1, 2, 3], 3)) == [[1, 2, 3]]
+
+    def test_empty_input_yields_nothing(self):
+        assert list(windowed([], 2)) == []
+
+    def test_too_few_items_yields_nothing(self):
+        assert list(windowed([1, 2], 3)) == []
+
+    def test_consumes_a_generator_lazily(self):
+        assert list(windowed((n for n in range(4)), 2)) == [[0, 1], [1, 2], [2, 3]]
+
+    def test_size_below_one_raises(self):
+        with pytest.raises(ValueError):
+            list(windowed([1, 2], 0))

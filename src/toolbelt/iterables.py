@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from collections import deque
 from collections.abc import Hashable, Iterable, Iterator
 from itertools import islice
 from typing import Callable, TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["batched", "chunk_by", "dedupe"]
+__all__ = ["batched", "chunk_by", "dedupe", "windowed"]
 
 
 def batched(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
@@ -41,6 +42,30 @@ def dedupe(
         if marker not in seen:
             seen.add(marker)
             yield item
+
+
+def windowed(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
+    """Yield sliding windows of ``size`` consecutive items from ``iterable``.
+
+    Each window overlaps the previous one by ``size - 1`` items and advances
+    by one. If ``iterable`` yields fewer than ``size`` items overall, no
+    window is produced at all — there is no short window at the end, unlike
+    ``batched``. Works lazily on any iterable, including generators.
+
+        >>> list(windowed([1, 2, 3, 4], 2))
+        [[1, 2], [2, 3], [3, 4]]
+    """
+    if size < 1:
+        raise ValueError(f"size must be at least 1, got {size}")
+
+    iterator = iter(iterable)
+    window: deque[T] = deque(islice(iterator, size), maxlen=size)
+    if len(window) < size:
+        return
+    yield list(window)
+    for item in iterator:
+        window.append(item)
+        yield list(window)
 
 
 def chunk_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> Iterator[list[T]]:
