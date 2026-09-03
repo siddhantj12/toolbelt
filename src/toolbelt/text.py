@@ -30,6 +30,16 @@ def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
     Truncation happens at a word boundary when one is available, so the result
     does not end mid-word. Raises ``ValueError`` if ``limit`` is too small to
     fit ``suffix``.
+
+        >>> truncate("hello brave world", 12)
+        'hello brave…'
+
+    A word boundary is only used when it leaves something behind — a string
+    that starts with whitespace right before the cut (e.g. ``" hello"``) falls
+    back to a plain character cut instead of discarding all visible content:
+
+        >>> truncate(" hello", 3)
+        ' h…'
     """
     if limit < len(suffix):
         raise ValueError(
@@ -41,5 +51,7 @@ def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
     cut = limit - len(suffix)
     head = value[:cut]
     if value[cut] != " " and " " in head:
-        head = head.rsplit(" ", 1)[0]
+        head_at_boundary = head.rsplit(" ", 1)[0]
+        if head_at_boundary:
+            head = head_at_boundary
     return head.rstrip() + suffix
