@@ -8,7 +8,7 @@ from typing import Callable, TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["batched", "chunk_by", "dedupe"]
+__all__ = ["batched", "chunk_by", "dedupe", "partition"]
 
 
 def batched(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
@@ -41,6 +41,28 @@ def dedupe(
         if marker not in seen:
             seen.add(marker)
             yield item
+
+
+def partition(
+    iterable: Iterable[T], predicate: Callable[[T], bool]
+) -> tuple[list[T], list[T]]:
+    """Split ``iterable`` into items that match ``predicate`` and items that don't.
+
+    Returns a ``(matches, non_matches)`` tuple of lists, built in a single pass
+    over ``iterable`` so ``predicate`` runs exactly once per item. Order is
+    preserved within each list.
+
+        >>> partition([1, 2, 3, 4, 5], lambda n: n % 2 == 0)
+        ([2, 4], [1, 3, 5])
+
+    Empty input returns ``([], [])``. If ``predicate`` raises, the exception
+    propagates and no tuple is returned.
+    """
+    matches: list[T] = []
+    non_matches: list[T] = []
+    for item in iterable:
+        (matches if predicate(item) else non_matches).append(item)
+    return matches, non_matches
 
 
 def chunk_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> Iterator[list[T]]:
