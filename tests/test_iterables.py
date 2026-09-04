@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.iterables import batched, chunk_by, dedupe
+from toolbelt.iterables import batched, chunk_by, dedupe, partition
 
 
 class TestBatched:
@@ -31,6 +31,32 @@ class TestDedupe:
 
     def test_empty_input_yields_nothing(self):
         assert list(dedupe([])) == []
+
+
+class TestPartition:
+    def test_splits_matches_from_non_matches(self):
+        assert partition([1, 2, 3, 4, 5], lambda n: n % 2 == 0) == (
+            [2, 4],
+            [1, 3, 5],
+        )
+
+    def test_preserves_order_within_each_list(self):
+        assert partition([5, 3, 4, 1, 2], lambda n: n % 2 == 0) == (
+            [4, 2],
+            [5, 3, 1],
+        )
+
+    def test_empty_input_returns_two_empty_lists(self):
+        assert partition([], lambda n: True) == ([], [])
+
+    def test_predicate_error_propagates(self):
+        def blows_up(n):
+            if n == 2:
+                raise ValueError("boom")
+            return True
+
+        with pytest.raises(ValueError):
+            partition([1, 2, 3], blows_up)
 
 
 class TestChunkBy:
