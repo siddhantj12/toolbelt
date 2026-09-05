@@ -8,7 +8,7 @@ from typing import Callable, TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["batched", "chunk_by", "dedupe"]
+__all__ = ["batched", "chunk_by", "dedupe", "first"]
 
 
 def batched(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
@@ -41,6 +41,23 @@ def dedupe(
         if marker not in seen:
             seen.add(marker)
             yield item
+
+
+def first(iterable: Iterable[T], default: T | None = None) -> T | None:
+    """Return the first item of ``iterable``, or ``default`` if it is empty.
+
+    Unlike ``next(iter(iterable))``, this never raises ``StopIteration`` on
+    an empty input. Only the first item is consumed, so it is safe to call
+    on an infinite generator.
+
+        >>> first([3, 1, 2])
+        3
+        >>> first([], default="none")
+        'none'
+    """
+    for item in iterable:
+        return item
+    return default
 
 
 def chunk_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> Iterator[list[T]]:
