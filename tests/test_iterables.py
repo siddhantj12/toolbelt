@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.iterables import batched, chunk_by, dedupe
+from toolbelt.iterables import batched, chunk_by, dedupe, first
 
 
 class TestBatched:
@@ -31,6 +31,28 @@ class TestDedupe:
 
     def test_empty_input_yields_nothing(self):
         assert list(dedupe([])) == []
+
+
+class TestFirst:
+    def test_returns_first_item(self):
+        assert first([3, 1, 2]) == 3
+
+    def test_empty_input_returns_none_by_default(self):
+        assert first([]) is None
+
+    def test_empty_input_returns_given_default(self):
+        assert first([], default="none") == "none"
+
+    def test_only_consumes_one_item_from_a_generator(self):
+        seen = []
+
+        def gen():
+            for n in range(5):
+                seen.append(n)
+                yield n
+
+        assert first(gen()) == 0
+        assert seen == [0]
 
 
 class TestChunkBy:
