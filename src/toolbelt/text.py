@@ -13,15 +13,25 @@ def slugify(value: str, *, separator: str = "-") -> str:
 
     Accents are folded to their ASCII base characters, runs of non-alphanumeric
     characters collapse into a single ``separator``, and leading and trailing
-    separators are stripped.
+    separators are stripped. The strip removes the exact ``separator`` text,
+    not any of its individual characters, so a multi-character separator never
+    eats into real content that happens to share a letter with it.
 
         >>> slugify("Crème Brûlée, please!")
         'creme-brulee-please'
+        >>> slugify("banana!!!", separator="an")
+        'banana'
     """
     folded = unicodedata.normalize("NFKD", value)
     ascii_only = folded.encode("ascii", "ignore").decode("ascii")
     collapsed = _NON_ALNUM.sub(separator, ascii_only.lower())
-    return collapsed.strip(separator)
+    if not separator:
+        return collapsed
+    while collapsed.startswith(separator):
+        collapsed = collapsed[len(separator) :]
+    while collapsed.endswith(separator):
+        collapsed = collapsed[: len(collapsed) - len(separator)]
+    return collapsed
 
 
 def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
