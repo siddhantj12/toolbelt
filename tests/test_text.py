@@ -1,6 +1,24 @@
 import pytest
 
-from toolbelt.text import slugify, truncate
+from toolbelt.text import common_prefix, slugify, truncate
+
+
+class TestCommonPrefix:
+    def test_shared_leading_substring(self):
+        assert common_prefix(["flower", "flow", "flight"]) == "fl"
+
+    def test_no_shared_characters_returns_empty_string(self):
+        assert common_prefix(["dog", "cat"]) == ""
+
+    def test_single_string_is_returned_unchanged(self):
+        assert common_prefix(["hello"]) == "hello"
+
+    def test_empty_string_in_input_yields_empty_prefix(self):
+        assert common_prefix(["", "abc"]) == ""
+
+    def test_empty_sequence_raises(self):
+        with pytest.raises(ValueError):
+            common_prefix([])
 
 
 class TestSlugify:
