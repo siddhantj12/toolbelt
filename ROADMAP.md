@@ -17,7 +17,6 @@ box in the same pull request that lands the work.
 ### `toolbelt.text`
 - [ ] `word_wrap(text, width)` — wrap preserving existing paragraph breaks.
 - [ ] `common_prefix(strings)` — longest shared leading substring.
-- [ ] `strip_ansi(text)` — remove ANSI escape sequences from terminal output.
 
 ### `toolbelt.mapping` (new module)
 - [ ] `deep_merge(a, b)` — recursively merge nested dicts, `b` winning on conflicts.
@@ -36,3 +35,4 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by` (`toolbelt.iterables`)
+- [x] `strip_ansi` (`toolbelt.text`)

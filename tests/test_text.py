@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.text import slugify, truncate
+from toolbelt.text import slugify, strip_ansi, truncate
 
 
 class TestSlugify:
@@ -45,3 +45,21 @@ class TestTruncate:
     def test_limit_smaller_than_suffix_raises(self):
         with pytest.raises(ValueError):
             truncate("hello", 1, suffix="...")
+
+
+class TestStripAnsi:
+    def test_removes_color_codes(self):
+        assert strip_ansi("\x1b[31mError:\x1b[0m disk full") == "Error: disk full"
+
+    def test_removes_cursor_movement_sequences(self):
+        assert strip_ansi("\x1b[2Kloading\x1b[1A\x1b[1G") == "loading"
+
+    def test_text_without_escapes_is_unchanged(self):
+        assert strip_ansi("plain text") == "plain text"
+
+    def test_empty_input_returns_empty(self):
+        assert strip_ansi("") == ""
+
+    def test_non_string_raises_type_error(self):
+        with pytest.raises(TypeError):
+            strip_ansi(123)

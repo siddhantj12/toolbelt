@@ -6,6 +6,7 @@ import re
 import unicodedata
 
 _NON_ALNUM = re.compile(r"[^a-z0-9]+")
+_ANSI_ESCAPE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
 
 def slugify(value: str, *, separator: str = "-") -> str:
@@ -43,3 +44,20 @@ def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
     if value[cut] != " " and " " in head:
         head = head.rsplit(" ", 1)[0]
     return head.rstrip() + suffix
+
+
+def strip_ansi(text: str) -> str:
+    """Return ``text`` with ANSI escape sequences removed.
+
+    Strips SGR codes (colors, bold, etc.), cursor-movement sequences, and
+    other CSI/Fe escape sequences that terminals interpret rather than
+    display. Text with no escape sequences is returned unchanged.
+
+        >>> strip_ansi("\\x1b[31mError:\\x1b[0m disk full")
+        'Error: disk full'
+
+    Raises ``TypeError`` if ``text`` is not a ``str``.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"text must be a str, got {type(text).__name__}")
+    return _ANSI_ESCAPE.sub("", text)
