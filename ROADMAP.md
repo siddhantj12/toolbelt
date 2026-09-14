@@ -20,7 +20,6 @@ box in the same pull request that lands the work.
 - [ ] `strip_ansi(text)` — remove ANSI escape sequences from terminal output.
 
 ### `toolbelt.mapping` (new module)
-- [ ] `deep_merge(a, b)` — recursively merge nested dicts, `b` winning on conflicts.
 - [ ] `get_path(mapping, "a.b.c", default=None)` — safe nested lookup.
 - [ ] `invert(mapping)` — swap keys and values, with a documented collision rule.
 
@@ -36,3 +35,4 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by` (`toolbelt.iterables`)
+- [x] `deep_merge` (`toolbelt.mapping`)
