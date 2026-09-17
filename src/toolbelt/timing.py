@@ -29,7 +29,7 @@ class Timer:
         self._start: float | None = None
         self._end: float | None = None
 
-    def __enter__(self) -> Timer:
+    def __enter__(self):
         self._start = time.perf_counter()
         self._end = None
         return self

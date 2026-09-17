@@ -26,9 +26,8 @@ class TestTimer:
         ticks = iter([10.0, 14.0])
         monkeypatch.setattr("time.perf_counter", lambda: next(ticks))
 
-        with pytest.raises(ValueError):
-            with Timer() as t:
-                raise ValueError("boom")
+        with pytest.raises(ValueError), Timer() as t:
+            raise ValueError("boom")
 
         assert t.elapsed == 4.0
         assert t.elapsed == 4.0
@@ -36,7 +35,7 @@ class TestTimer:
     def test_elapsed_before_entering_raises(self):
         t = Timer()
         with pytest.raises(RuntimeError):
-            t.elapsed
+            _ = t.elapsed
 
     def test_repr_before_and_after_use(self, monkeypatch):
         assert repr(Timer()) == "Timer(not started)"
