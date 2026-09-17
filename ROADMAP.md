@@ -25,7 +25,6 @@ box in the same pull request that lands the work.
 - [ ] `invert(mapping)` — swap keys and values, with a documented collision rule.
 
 ### `toolbelt.timing` (new module)
-- [ ] `Timer` context manager — wall-clock elapsed time with a readable `repr`.
 - [ ] `retry(attempts, backoff)` — decorator with exponential backoff.
 
 ## Infrastructure
@@ -36,3 +35,4 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by` (`toolbelt.iterables`)
+- [x] `Timer` (`toolbelt.timing`)
