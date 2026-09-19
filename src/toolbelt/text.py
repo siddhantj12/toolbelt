@@ -13,14 +13,18 @@ def slugify(value: str, *, separator: str = "-") -> str:
 
     Accents are folded to their ASCII base characters, runs of non-alphanumeric
     characters collapse into a single ``separator``, and leading and trailing
-    separators are stripped.
+    separators are stripped. ``separator`` is inserted literally, even if it
+    contains characters like ``\\`` that are special in a regex replacement
+    string.
 
         >>> slugify("Crème Brûlée, please!")
         'creme-brulee-please'
+        >>> slugify("a b", separator="\\1")
+        'a\\1b'
     """
     folded = unicodedata.normalize("NFKD", value)
     ascii_only = folded.encode("ascii", "ignore").decode("ascii")
-    collapsed = _NON_ALNUM.sub(separator, ascii_only.lower())
+    collapsed = _NON_ALNUM.sub(lambda _match: separator, ascii_only.lower())
     return collapsed.strip(separator)
 
 

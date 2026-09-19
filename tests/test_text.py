@@ -22,6 +22,15 @@ class TestSlugify:
     def test_string_with_no_alphanumerics_becomes_empty(self):
         assert slugify("!!!") == ""
 
+    def test_separator_with_backslash_digit_is_literal_not_a_backreference(self):
+        # Regression: passing `separator` straight to re.sub as the
+        # replacement string let backslash sequences like "\1" be
+        # interpreted as regex backreferences instead of literal text.
+        assert slugify("a b", separator="\\1") == "a\\1b"
+
+    def test_separator_with_group_syntax_is_literal(self):
+        assert slugify("a b c", separator="\\g<0>") == "a\\g<0>b\\g<0>c"
+
 
 class TestTruncate:
     def test_short_string_is_unchanged(self):
