@@ -26,7 +26,6 @@ box in the same pull request that lands the work.
 
 ### `toolbelt.timing` (new module)
 - [ ] `Timer` context manager — wall-clock elapsed time with a readable `repr`.
-- [ ] `retry(attempts, backoff)` — decorator with exponential backoff.
 
 ## Infrastructure
 - [ ] Add `py.typed` marker so type checkers see the inline annotations.
@@ -36,3 +35,4 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by` (`toolbelt.iterables`)
+- [x] `retry` (`toolbelt.timing`)
