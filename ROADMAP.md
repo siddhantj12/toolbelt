@@ -31,8 +31,8 @@ box in the same pull request that lands the work.
 ## Infrastructure
 - [ ] Add `py.typed` marker so type checkers see the inline annotations.
 - [ ] Add mypy to CI once the public surface stabilises.
-- [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by` (`toolbelt.iterables`)
+- [x] Property-based tests for `slugify` idempotence via Hypothesis.
