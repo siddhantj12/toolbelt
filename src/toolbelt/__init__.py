@@ -9,11 +9,12 @@ from toolbelt.iterables import (
     partition,
     windowed,
 )
-from toolbelt.text import slugify, truncate, word_wrap
+from toolbelt.text import common_prefix, slugify, truncate, word_wrap
 
 __all__ = [
     "batched",
     "chunk_by",
+    "common_prefix",
     "dedupe",
     "first",
     "flatten",
