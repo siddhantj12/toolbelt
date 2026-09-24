@@ -31,6 +31,9 @@ class TestSlugify:
     def test_multi_char_separator_still_strips_from_both_ends(self):
         assert slugify("__hello__", separator="__") == "hello"
 
+    def test_multi_char_separator_keeps_content_ending_in_separator(self):
+        assert slugify("Japan!", separator="an") == "japan"
+
     def test_empty_separator_collapses_without_stripping(self):
         assert slugify("hi!!", separator="") == "hi"
 

@@ -25,13 +25,8 @@ def slugify(value: str, *, separator: str = "-") -> str:
     folded = unicodedata.normalize("NFKD", value)
     ascii_only = folded.encode("ascii", "ignore").decode("ascii")
     collapsed = _NON_ALNUM.sub(separator, ascii_only.lower())
-    if not separator:
-        return collapsed
-    while collapsed.startswith(separator):
-        collapsed = collapsed[len(separator) :]
-    while collapsed.endswith(separator):
-        collapsed = collapsed[: len(collapsed) - len(separator)]
-    return collapsed
+    # Runs collapse to one separator, so at most one sits at each end.
+    return collapsed.removeprefix(separator).removesuffix(separator)
 
 
 def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
