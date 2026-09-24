@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.text import common_prefix, slugify, truncate
+from toolbelt.text import common_prefix, slugify, truncate, word_wrap
 
 
 class TestCommonPrefix:
@@ -40,6 +40,21 @@ class TestSlugify:
     def test_string_with_no_alphanumerics_becomes_empty(self):
         assert slugify("!!!") == ""
 
+    def test_multi_char_separator_does_not_eat_shared_letters(self):
+        # Regression: str.strip(separator) treats a multi-character separator
+        # as a set of characters, not a literal substring, so a naive fix
+        # would strip the trailing "an" from "banana" down to "b".
+        assert slugify("banana!!!", separator="an") == "banana"
+
+    def test_multi_char_separator_still_strips_from_both_ends(self):
+        assert slugify("__hello__", separator="__") == "hello"
+
+    def test_multi_char_separator_keeps_content_ending_in_separator(self):
+        assert slugify("Japan!", separator="an") == "japan"
+
+    def test_empty_separator_collapses_without_stripping(self):
+        assert slugify("hi!!", separator="") == "hi"
+
 
 class TestTruncate:
     def test_short_string_is_unchanged(self):
@@ -63,3 +78,39 @@ class TestTruncate:
     def test_limit_smaller_than_suffix_raises(self):
         with pytest.raises(ValueError):
             truncate("hello", 1, suffix="...")
+
+    def test_leading_space_does_not_discard_all_content(self):
+        assert truncate(" hello", 3) == " h…"
+
+    def test_word_boundary_at_very_start_falls_back_to_char_cut(self):
+        assert truncate(" abcdef", 4) == " ab…"
+
+
+
+class TestWordWrap:
+    def test_wraps_at_width(self):
+        assert word_wrap("one two three four", 10) == "one two\nthree four"
+
+    def test_preserves_paragraph_breaks(self):
+        text = "first para\n\nsecond para"
+        assert word_wrap(text, 20) == "first para\n\nsecond para"
+
+    def test_collapses_single_newlines_within_a_paragraph(self):
+        assert word_wrap("one two\nthree four", 100) == "one two three four"
+
+    def test_long_word_is_kept_whole(self):
+        assert word_wrap("supercalifragilistic", 8) == "supercalifragilistic"
+
+    def test_no_line_exceeds_width_except_a_single_long_word(self):
+        result = word_wrap("the quick brown fox jumps over", 10)
+        assert all(len(line) <= 10 for line in result.split("\n"))
+
+    def test_empty_input_returns_empty_string(self):
+        assert word_wrap("", 10) == ""
+
+    def test_whitespace_only_input_returns_empty_string(self):
+        assert word_wrap("   \n\n  ", 10) == ""
+
+    def test_width_below_one_raises(self):
+        with pytest.raises(ValueError):
+            word_wrap("hello", 0)
