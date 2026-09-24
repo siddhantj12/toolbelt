@@ -58,7 +58,6 @@ box in the same pull request that lands the work.
 
 
 ### `toolbelt.text`
-- [ ] `word_wrap(text, width)` — wrap preserving existing paragraph breaks.
 - [ ] `common_prefix(strings)` — longest shared leading substring.
 - [ ] `strip_ansi(text)` — remove ANSI escape sequences from terminal output.
 
@@ -77,5 +76,5 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
-- [x] `slugify`, `truncate` (`toolbelt.text`)
+- [x] `slugify`, `truncate`, `word_wrap` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)

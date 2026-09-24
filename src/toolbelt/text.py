@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import re
+import textwrap
 import unicodedata
 
 _NON_ALNUM = re.compile(r"[^a-z0-9]+")
+_PARAGRAPH_BREAK = re.compile(r"\n\s*\n")
 
 
 def slugify(value: str, *, separator: str = "-") -> str:
@@ -60,3 +62,33 @@ def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
         if head_at_boundary:
             head = head_at_boundary
     return head.rstrip() + suffix
+
+
+def word_wrap(text: str, width: int) -> str:
+    """Wrap ``text`` to ``width`` columns, preserving paragraph breaks.
+
+    A paragraph break is one or more blank lines; each paragraph is wrapped
+    independently and paragraphs are rejoined with a single blank line
+    between them. Within a paragraph, existing single line breaks and other
+    runs of whitespace are collapsed before wrapping, so already-wrapped
+    input is treated as one paragraph and re-flowed. A single word longer
+    than ``width`` is kept whole on its own line rather than being broken.
+
+        >>> word_wrap("one two three four", 10)
+        'one two\\nthree four'
+        >>> word_wrap("first para\\n\\nsecond para", 20)
+        'first para\\n\\nsecond para'
+
+    Raises ``ValueError`` if ``width`` is less than 1. Empty or
+    whitespace-only input returns ``""``.
+    """
+    if width < 1:
+        raise ValueError(f"width must be at least 1, got {width}")
+
+    paragraphs = _PARAGRAPH_BREAK.split(text.strip())
+    wrapped = [
+        textwrap.fill(" ".join(paragraph.split()), width=width, break_long_words=False)
+        for paragraph in paragraphs
+        if paragraph.strip()
+    ]
+    return "\n\n".join(wrapped)
