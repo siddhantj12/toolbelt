@@ -9,7 +9,7 @@ from toolbelt.iterables import (
     partition,
     windowed,
 )
-from toolbelt.mapping import deep_merge
+from toolbelt.mapping import deep_merge, get_path, invert
 from toolbelt.text import common_prefix, slugify, strip_ansi, truncate, word_wrap
 
 __all__ = [
@@ -20,6 +20,8 @@ __all__ = [
     "deep_merge",
     "first",
     "flatten",
+    "get_path",
+    "invert",
     "partition",
     "slugify",
     "strip_ansi",

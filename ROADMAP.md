@@ -45,34 +45,6 @@ box in the same pull request that lands the work.
 - [ ] `atomic_write(path, text)` — write via a temp file in the same directory and `os.replace`.
 - [ ] `read_lines(path, *, strip=True, skip_blank=True)` — lines of a text file as a list.
 
-### `toolbelt.iterables`
-- [ ] `partition(iterable, predicate)` — split into matching and non-matching, one pass.
-
-
-- [ ] `windowed(iterable, size)` — sliding windows of `size` consecutive items.
-- [ ] `first(iterable, default=None)` — first item without raising on empty input.
-
-
-- [ ] `flatten(nested, depth=1)` — flatten nested iterables, strings treated as atoms.
-
-
-
-### `toolbelt.text`
-- [ ] `common_prefix(strings)` — longest shared leading substring.
-
-
-- [ ] `word_wrap(text, width)` — wrap preserving existing paragraph breaks.
-- [ ] `strip_ansi(text)` — remove ANSI escape sequences from terminal output.
-
-
-
-### `toolbelt.mapping` (new module)
-- [ ] `get_path(mapping, "a.b.c", default=None)` — safe nested lookup.
-
-
-- [ ] `deep_merge(a, b)` — recursively merge nested dicts, `b` winning on conflicts.
-- [ ] `invert(mapping)` — swap keys and values, with a documented collision rule.
-
 ### `toolbelt.timing` (new module)
 - [ ] `Timer` context manager — wall-clock elapsed time with a readable `repr`.
 - [ ] `retry(attempts, backoff)` — decorator with exponential backoff.
@@ -85,4 +57,4 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)
-- [x] `deep_merge`, `get_path` (`toolbelt.mapping`)
+- [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
