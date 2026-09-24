@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.iterables import batched, chunk_by, dedupe, first
+from toolbelt.iterables import batched, chunk_by, dedupe, first, partition, windowed
 
 
 class TestBatched:
@@ -31,6 +31,32 @@ class TestDedupe:
 
     def test_empty_input_yields_nothing(self):
         assert list(dedupe([])) == []
+
+
+class TestPartition:
+    def test_splits_matches_from_non_matches(self):
+        assert partition([1, 2, 3, 4, 5], lambda n: n % 2 == 0) == (
+            [2, 4],
+            [1, 3, 5],
+        )
+
+    def test_preserves_order_within_each_list(self):
+        assert partition([5, 3, 4, 1, 2], lambda n: n % 2 == 0) == (
+            [4, 2],
+            [5, 3, 1],
+        )
+
+    def test_empty_input_returns_two_empty_lists(self):
+        assert partition([], lambda n: True) == ([], [])
+
+    def test_predicate_error_propagates(self):
+        def blows_up(n):
+            if n == 2:
+                raise ValueError("boom")
+            return True
+
+        with pytest.raises(ValueError):
+            partition([1, 2, 3], blows_up)
 
 
 class TestFirst:
@@ -72,3 +98,27 @@ class TestChunkBy:
 
     def test_falsy_first_item_still_starts_a_group(self):
         assert list(chunk_by([0, 0, 1], key=lambda n: n)) == [[0, 0], [1]]
+
+
+class TestWindowed:
+    def test_slides_by_one(self):
+        assert list(windowed([1, 2, 3, 4], 2)) == [[1, 2], [2, 3], [3, 4]]
+
+    def test_size_one_yields_singletons(self):
+        assert list(windowed([1, 2, 3], 1)) == [[1], [2], [3]]
+
+    def test_size_equal_to_length_yields_one_window(self):
+        assert list(windowed([1, 2, 3], 3)) == [[1, 2, 3]]
+
+    def test_empty_input_yields_nothing(self):
+        assert list(windowed([], 2)) == []
+
+    def test_too_few_items_yields_nothing(self):
+        assert list(windowed([1, 2], 3)) == []
+
+    def test_consumes_a_generator_lazily(self):
+        assert list(windowed((n for n in range(4)), 2)) == [[0, 1], [1, 2], [2, 3]]
+
+    def test_size_below_one_raises(self):
+        with pytest.raises(ValueError):
+            list(windowed([1, 2], 0))
