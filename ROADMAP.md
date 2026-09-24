@@ -51,6 +51,8 @@ box in the same pull request that lands the work.
 
 - [ ] `windowed(iterable, size)` — sliding windows of `size` consecutive items.
 - [ ] `first(iterable, default=None)` — first item without raising on empty input.
+
+
 - [ ] `flatten(nested, depth=1)` — flatten nested iterables, strings treated as atoms.
 
 ### `toolbelt.text`
@@ -74,4 +76,4 @@ box in the same pull request that lands the work.
 
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
-- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition` (`toolbelt.iterables`)
+- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first` (`toolbelt.iterables`)
