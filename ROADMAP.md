@@ -47,6 +47,9 @@ box in the same pull request that lands the work.
 
 ### `toolbelt.iterables`
 - [ ] `partition(iterable, predicate)` — split into matching and non-matching, one pass.
+
+
+- [ ] `windowed(iterable, size)` — sliding windows of `size` consecutive items.
 - [ ] `first(iterable, default=None)` — first item without raising on empty input.
 - [ ] `flatten(nested, depth=1)` — flatten nested iterables, strings treated as atoms.
 
@@ -71,4 +74,4 @@ box in the same pull request that lands the work.
 
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
-- [x] `batched`, `dedupe`, `chunk_by`, `windowed` (`toolbelt.iterables`)
+- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition` (`toolbelt.iterables`)
