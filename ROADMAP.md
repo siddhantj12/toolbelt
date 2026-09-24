@@ -68,6 +68,9 @@ box in the same pull request that lands the work.
 
 ### `toolbelt.mapping` (new module)
 - [ ] `get_path(mapping, "a.b.c", default=None)` — safe nested lookup.
+
+
+- [ ] `deep_merge(a, b)` — recursively merge nested dicts, `b` winning on conflicts.
 - [ ] `invert(mapping)` — swap keys and values, with a documented collision rule.
 
 ### `toolbelt.timing` (new module)
@@ -82,4 +85,4 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)
-- [x] `deep_merge` (`toolbelt.mapping`)
+- [x] `deep_merge`, `get_path` (`toolbelt.mapping`)
