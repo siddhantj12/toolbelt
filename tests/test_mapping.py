@@ -2,8 +2,6 @@ import pytest
 
 from toolbelt.mapping import deep_merge, get_path
 
-__all__ = []
-
 
 class TestDeepMerge:
     def test_merges_nested_dicts_recursively(self):
