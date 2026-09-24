@@ -45,3 +45,9 @@ class TestTruncate:
     def test_limit_smaller_than_suffix_raises(self):
         with pytest.raises(ValueError):
             truncate("hello", 1, suffix="...")
+
+    def test_leading_space_does_not_discard_all_content(self):
+        assert truncate(" hello", 3) == " h…"
+
+    def test_word_boundary_at_very_start_falls_back_to_char_cut(self):
+        assert truncate(" abcdef", 4) == " ab…"
