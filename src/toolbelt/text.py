@@ -13,15 +13,20 @@ def slugify(value: str, *, separator: str = "-") -> str:
 
     Accents are folded to their ASCII base characters, runs of non-alphanumeric
     characters collapse into a single ``separator``, and leading and trailing
-    separators are stripped.
+    separators are stripped. The strip removes the exact ``separator`` text,
+    not any of its individual characters, so a multi-character separator never
+    eats into real content that happens to share a letter with it.
 
         >>> slugify("Crème Brûlée, please!")
         'creme-brulee-please'
+        >>> slugify("banana!!!", separator="an")
+        'banana'
     """
     folded = unicodedata.normalize("NFKD", value)
     ascii_only = folded.encode("ascii", "ignore").decode("ascii")
     collapsed = _NON_ALNUM.sub(separator, ascii_only.lower())
-    return collapsed.strip(separator)
+    # Runs collapse to one separator, so at most one sits at each end.
+    return collapsed.removeprefix(separator).removesuffix(separator)
 
 
 def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
@@ -30,6 +35,16 @@ def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
     Truncation happens at a word boundary when one is available, so the result
     does not end mid-word. Raises ``ValueError`` if ``limit`` is too small to
     fit ``suffix``.
+
+        >>> truncate("hello brave world", 12)
+        'hello brave…'
+
+    A word boundary is only used when it leaves something behind — a string
+    that starts with whitespace right before the cut (e.g. ``" hello"``) falls
+    back to a plain character cut instead of discarding all visible content:
+
+        >>> truncate(" hello", 3)
+        ' h…'
     """
     if limit < len(suffix):
         raise ValueError(
@@ -41,5 +56,7 @@ def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
     cut = limit - len(suffix)
     head = value[:cut]
     if value[cut] != " " and " " in head:
-        head = head.rsplit(" ", 1)[0]
+        head_at_boundary = head.rsplit(" ", 1)[0]
+        if head_at_boundary:
+            head = head_at_boundary
     return head.rstrip() + suffix
