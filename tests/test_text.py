@@ -22,6 +22,21 @@ class TestSlugify:
     def test_string_with_no_alphanumerics_becomes_empty(self):
         assert slugify("!!!") == ""
 
+    def test_multi_char_separator_does_not_eat_shared_letters(self):
+        # Regression: str.strip(separator) treats a multi-character separator
+        # as a set of characters, not a literal substring, so a naive fix
+        # would strip the trailing "an" from "banana" down to "b".
+        assert slugify("banana!!!", separator="an") == "banana"
+
+    def test_multi_char_separator_still_strips_from_both_ends(self):
+        assert slugify("__hello__", separator="__") == "hello"
+
+    def test_multi_char_separator_keeps_content_ending_in_separator(self):
+        assert slugify("Japan!", separator="an") == "japan"
+
+    def test_empty_separator_collapses_without_stripping(self):
+        assert slugify("hi!!", separator="") == "hi"
+
 
 class TestTruncate:
     def test_short_string_is_unchanged(self):
