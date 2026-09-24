@@ -46,7 +46,6 @@ box in the same pull request that lands the work.
 - [ ] `read_lines(path, *, strip=True, skip_blank=True)` — lines of a text file as a list.
 
 ### `toolbelt.iterables`
-- [ ] `windowed(iterable, size)` — sliding windows of `size` consecutive items.
 - [ ] `partition(iterable, predicate)` — split into matching and non-matching, one pass.
 - [ ] `first(iterable, default=None)` — first item without raising on empty input.
 - [ ] `flatten(nested, depth=1)` — flatten nested iterables, strings treated as atoms.
@@ -72,4 +71,4 @@ box in the same pull request that lands the work.
 
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
-- [x] `batched`, `dedupe`, `chunk_by` (`toolbelt.iterables`)
+- [x] `batched`, `dedupe`, `chunk_by`, `windowed` (`toolbelt.iterables`)
