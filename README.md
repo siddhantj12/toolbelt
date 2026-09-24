@@ -29,7 +29,8 @@ ruff check .
 
 ## Contributing
 
-See [ROADMAP.md](ROADMAP.md)
+This repository is maintained partly by a scheduled agent that adds one small,
+self-contained improvement per day via pull request. See [ROADMAP.md](ROADMAP.md)
 for the queue of planned utilities, and [CONTRIBUTING.md](CONTRIBUTING.md) for
 the bar every change is held to.
 

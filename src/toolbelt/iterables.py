@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from collections import deque
 from collections.abc import Hashable, Iterable, Iterator
 from itertools import islice
 from typing import Callable, TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["batched", "chunk_by", "dedupe"]
+__all__ = ["batched", "chunk_by", "dedupe", "first", "partition", "windowed"]
 
 
 def batched(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
@@ -41,6 +42,69 @@ def dedupe(
         if marker not in seen:
             seen.add(marker)
             yield item
+
+
+def windowed(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
+    """Yield sliding windows of ``size`` consecutive items from ``iterable``.
+
+    Each window overlaps the previous one by ``size - 1`` items and advances
+    by one. If ``iterable`` yields fewer than ``size`` items overall, no
+    window is produced at all — there is no short window at the end, unlike
+    ``batched``. Works lazily on any iterable, including generators.
+
+        >>> list(windowed([1, 2, 3, 4], 2))
+        [[1, 2], [2, 3], [3, 4]]
+    """
+    if size < 1:
+        raise ValueError(f"size must be at least 1, got {size}")
+
+    iterator = iter(iterable)
+    window: deque[T] = deque(islice(iterator, size), maxlen=size)
+    if len(window) < size:
+        return
+    yield list(window)
+    for item in iterator:
+        window.append(item)
+        yield list(window)
+
+
+def partition(
+    iterable: Iterable[T], predicate: Callable[[T], bool]
+) -> tuple[list[T], list[T]]:
+    """Split ``iterable`` into items that match ``predicate`` and items that don't.
+
+    Returns a ``(matches, non_matches)`` tuple of lists, built in a single pass
+    over ``iterable`` so ``predicate`` runs exactly once per item. Order is
+    preserved within each list.
+
+        >>> partition([1, 2, 3, 4, 5], lambda n: n % 2 == 0)
+        ([2, 4], [1, 3, 5])
+
+    Empty input returns ``([], [])``. If ``predicate`` raises, the exception
+    propagates and no tuple is returned.
+    """
+    matches: list[T] = []
+    non_matches: list[T] = []
+    for item in iterable:
+        (matches if predicate(item) else non_matches).append(item)
+    return matches, non_matches
+
+
+def first(iterable: Iterable[T], default: T | None = None) -> T | None:
+    """Return the first item of ``iterable``, or ``default`` if it is empty.
+
+    Unlike ``next(iter(iterable))``, this never raises ``StopIteration`` on
+    an empty input. Only the first item is consumed, so it is safe to call
+    on an infinite generator.
+
+        >>> first([3, 1, 2])
+        3
+        >>> first([], default="none")
+        'none'
+    """
+    for item in iterable:
+        return item
+    return default
 
 
 def chunk_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> Iterator[list[T]]:
