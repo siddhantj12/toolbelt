@@ -55,6 +55,8 @@ box in the same pull request that lands the work.
 
 - [ ] `flatten(nested, depth=1)` — flatten nested iterables, strings treated as atoms.
 
+
+
 ### `toolbelt.text`
 - [ ] `word_wrap(text, width)` — wrap preserving existing paragraph breaks.
 - [ ] `common_prefix(strings)` — longest shared leading substring.
@@ -76,4 +78,4 @@ box in the same pull request that lands the work.
 
 ## Done
 - [x] `slugify`, `truncate` (`toolbelt.text`)
-- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first` (`toolbelt.iterables`)
+- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)
