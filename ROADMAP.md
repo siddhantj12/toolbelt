@@ -50,7 +50,6 @@ box in the same pull request that lands the work.
 - [ ] `retry(attempts, backoff)` — decorator with exponential backoff.
 
 ## Infrastructure
-- [ ] Add `py.typed` marker so type checkers see the inline annotations.
 - [ ] Add mypy to CI once the public surface stabilises.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
@@ -58,3 +57,4 @@ box in the same pull request that lands the work.
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
+- [x] Add `py.typed` marker so type checkers see the inline annotations.
