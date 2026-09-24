@@ -21,6 +21,9 @@ class TestCommonPrefix:
             common_prefix([])
 
 
+from toolbelt.text import strip_ansi
+
+
 class TestSlugify:
     def test_lowercases_and_joins_words(self):
         assert slugify("Hello World") == "hello-world"
@@ -114,3 +117,22 @@ class TestWordWrap:
     def test_width_below_one_raises(self):
         with pytest.raises(ValueError):
             word_wrap("hello", 0)
+
+
+
+class TestStripAnsi:
+    def test_removes_color_codes(self):
+        assert strip_ansi("\x1b[31mError:\x1b[0m disk full") == "Error: disk full"
+
+    def test_removes_cursor_movement_sequences(self):
+        assert strip_ansi("\x1b[2Kloading\x1b[1A\x1b[1G") == "loading"
+
+    def test_text_without_escapes_is_unchanged(self):
+        assert strip_ansi("plain text") == "plain text"
+
+    def test_empty_input_returns_empty(self):
+        assert strip_ansi("") == ""
+
+    def test_non_string_raises_type_error(self):
+        with pytest.raises(TypeError):
+            strip_ansi(123)

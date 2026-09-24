@@ -9,7 +9,7 @@ from toolbelt.iterables import (
     partition,
     windowed,
 )
-from toolbelt.text import common_prefix, slugify, truncate, word_wrap
+from toolbelt.text import common_prefix, slugify, strip_ansi, truncate, word_wrap
 
 __all__ = [
     "batched",
@@ -20,6 +20,7 @@ __all__ = [
     "flatten",
     "partition",
     "slugify",
+    "strip_ansi",
     "truncate",
     "windowed",
     "word_wrap",

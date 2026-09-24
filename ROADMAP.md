@@ -64,6 +64,8 @@ box in the same pull request that lands the work.
 - [ ] `word_wrap(text, width)` — wrap preserving existing paragraph breaks.
 - [ ] `strip_ansi(text)` — remove ANSI escape sequences from terminal output.
 
+
+
 ### `toolbelt.mapping` (new module)
 - [ ] `deep_merge(a, b)` — recursively merge nested dicts, `b` winning on conflicts.
 - [ ] `get_path(mapping, "a.b.c", default=None)` — safe nested lookup.
@@ -79,5 +81,5 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
-- [x] `slugify`, `truncate`, `word_wrap`, `common_prefix` (`toolbelt.text`)
+- [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)
