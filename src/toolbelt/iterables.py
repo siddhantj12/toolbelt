@@ -9,7 +9,16 @@ from typing import Callable, TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["batched", "chunk_by", "dedupe", "first", "flatten", "partition", "windowed"]
+__all__ = [
+    "batched",
+    "chunk_by",
+    "dedupe",
+    "first",
+    "flatten",
+    "group_by",
+    "partition",
+    "windowed",
+]
 
 
 def batched(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
@@ -130,6 +139,28 @@ def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
             yield from flatten(item, depth - 1)
         else:
             yield item
+
+
+def group_by(
+    iterable: Iterable[T], key: Callable[[T], Hashable]
+) -> dict[Hashable, list[T]]:
+    """Group items of ``iterable`` into lists keyed by ``key(item)``.
+
+    Unlike ``itertools.groupby``, ``iterable`` does not need to be sorted
+    first — items sharing a key are collected together no matter where they
+    appear. Keys appear in the returned dict in first-seen order, and each
+    key's list keeps the items' original relative order.
+
+        >>> group_by(["ant", "bee", "ape", "cow"], key=lambda w: w[0])
+        {'a': ['ant', 'ape'], 'b': ['bee'], 'c': ['cow']}
+
+    Empty input returns ``{}``. If ``key`` raises, the exception propagates
+    and no dict is returned.
+    """
+    groups: dict[Hashable, list[T]] = {}
+    for item in iterable:
+        groups.setdefault(key(item), []).append(item)
+    return groups
 
 
 def chunk_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> Iterator[list[T]]:
