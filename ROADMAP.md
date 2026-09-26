@@ -11,7 +11,6 @@ box in the same pull request that lands the work.
 ### Next batch (added 2026-09-24)
 
 `toolbelt.iterables`
-- [ ] `group_by(iterable, key)` — dict of lists, first-seen key order, no pre-sorting needed.
 - [ ] `count_by(iterable, key)` — dict of counts per key, first-seen key order.
 - [ ] `interleave(*iterables)` — round-robin across inputs until all are exhausted.
 - [ ] `unique_justseen(iterable, key=None)` — drop consecutive duplicates only.
@@ -55,6 +54,6 @@ box in the same pull request that lands the work.
 
 ## Done
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
-- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten` (`toolbelt.iterables`)
+- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.

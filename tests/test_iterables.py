@@ -6,6 +6,7 @@ from toolbelt.iterables import (
     dedupe,
     first,
     flatten,
+    group_by,
     partition,
     windowed,
 )
@@ -87,6 +88,31 @@ class TestFirst:
 
         assert first(gen()) == 0
         assert seen == [0]
+
+
+class TestGroupBy:
+    def test_groups_non_adjacent_matches_together(self):
+        words = ["ant", "bee", "ape", "cow"]
+        assert group_by(words, key=lambda w: w[0]) == {
+            "a": ["ant", "ape"],
+            "b": ["bee"],
+            "c": ["cow"],
+        }
+
+    def test_keys_appear_in_first_seen_order(self):
+        assert list(group_by([3, 1, 3, 2, 1], key=lambda n: n)) == [3, 1, 2]
+
+    def test_empty_input_returns_empty_dict(self):
+        assert group_by([], key=lambda x: x) == {}
+
+    def test_key_error_propagates(self):
+        def blows_up(n):
+            if n == 2:
+                raise ValueError("boom")
+            return n
+
+        with pytest.raises(ValueError):
+            group_by([1, 2, 3], key=blows_up)
 
 
 class TestChunkBy:

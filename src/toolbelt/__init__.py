@@ -6,6 +6,7 @@ from toolbelt.iterables import (
     dedupe,
     first,
     flatten,
+    group_by,
     partition,
     windowed,
 )
@@ -21,6 +22,7 @@ __all__ = [
     "first",
     "flatten",
     "get_path",
+    "group_by",
     "invert",
     "partition",
     "slugify",
