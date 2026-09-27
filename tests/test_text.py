@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.text import common_prefix, slugify, truncate, word_wrap
+from toolbelt.text import common_prefix, slugify, strip_ansi, truncate, word_wrap
 
 
 class TestCommonPrefix:
@@ -19,9 +19,6 @@ class TestCommonPrefix:
     def test_empty_sequence_raises(self):
         with pytest.raises(ValueError):
             common_prefix([])
-
-
-from toolbelt.text import strip_ansi
 
 
 class TestSlugify:
