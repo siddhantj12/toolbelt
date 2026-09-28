@@ -3,6 +3,7 @@ import pytest
 from toolbelt.iterables import (
     batched,
     chunk_by,
+    count_by,
     dedupe,
     first,
     flatten,
@@ -113,6 +114,27 @@ class TestGroupBy:
 
         with pytest.raises(ValueError):
             group_by([1, 2, 3], key=blows_up)
+
+
+class TestCountBy:
+    def test_counts_items_per_key(self):
+        words = ["ant", "bee", "ape", "cow"]
+        assert count_by(words, key=lambda w: w[0]) == {"a": 2, "b": 1, "c": 1}
+
+    def test_keys_appear_in_first_seen_order(self):
+        assert list(count_by([3, 1, 3, 2, 1], key=lambda n: n)) == [3, 1, 2]
+
+    def test_empty_input_returns_empty_dict(self):
+        assert count_by([], key=lambda x: x) == {}
+
+    def test_key_error_propagates(self):
+        def blows_up(n):
+            if n == 2:
+                raise ValueError("boom")
+            return n
+
+        with pytest.raises(ValueError):
+            count_by([1, 2, 3], key=blows_up)
 
 
 class TestChunkBy:

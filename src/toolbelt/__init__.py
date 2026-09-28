@@ -3,6 +3,7 @@
 from toolbelt.iterables import (
     batched,
     chunk_by,
+    count_by,
     dedupe,
     first,
     flatten,
@@ -17,6 +18,7 @@ __all__ = [
     "batched",
     "chunk_by",
     "common_prefix",
+    "count_by",
     "dedupe",
     "deep_merge",
     "first",

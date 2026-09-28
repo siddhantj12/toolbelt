@@ -12,6 +12,7 @@ T = TypeVar("T")
 __all__ = [
     "batched",
     "chunk_by",
+    "count_by",
     "dedupe",
     "first",
     "flatten",
@@ -161,6 +162,25 @@ def group_by(
     for item in iterable:
         groups.setdefault(key(item), []).append(item)
     return groups
+
+
+def count_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> dict[Hashable, int]:
+    """Count items of ``iterable`` grouped by ``key(item)``.
+
+    Keys appear in the returned dict in first-seen order, each mapped to how
+    many items produced that key.
+
+        >>> count_by(["ant", "bee", "ape", "cow"], key=lambda w: w[0])
+        {'a': 2, 'b': 1, 'c': 1}
+
+    Empty input returns ``{}``. If ``key`` raises, the exception propagates
+    and no dict is returned.
+    """
+    counts: dict[Hashable, int] = {}
+    for item in iterable:
+        marker = key(item)
+        counts[marker] = counts.get(marker, 0) + 1
+    return counts
 
 
 def chunk_by(iterable: Iterable[T], key: Callable[[T], Hashable]) -> Iterator[list[T]]:
