@@ -8,6 +8,7 @@ from toolbelt.iterables import (
     first,
     flatten,
     group_by,
+    interleave,
     partition,
     windowed,
 )
@@ -178,6 +179,24 @@ class TestWindowed:
     def test_size_below_one_raises(self):
         with pytest.raises(ValueError):
             list(windowed([1, 2], 0))
+
+
+class TestInterleave:
+    def test_round_robins_equal_length_inputs(self):
+        assert list(interleave([1, 2, 3], [10, 20, 30])) == [1, 10, 2, 20, 3, 30]
+
+    def test_keeps_going_after_shorter_inputs_are_exhausted(self):
+        assert list(interleave([1, 2, 3], [10, 20], [100])) == [1, 10, 100, 2, 20, 3]
+
+    def test_no_iterables_yields_nothing(self):
+        assert list(interleave()) == []
+
+    def test_only_empty_iterables_yields_nothing(self):
+        assert list(interleave([], [])) == []
+
+    def test_non_iterable_argument_raises(self):
+        with pytest.raises(TypeError):
+            list(interleave(1, [2, 3]))
 
 
 class TestFlatten:
