@@ -17,6 +17,7 @@ __all__ = [
     "first",
     "flatten",
     "group_by",
+    "interleave",
     "partition",
     "windowed",
 ]
@@ -140,6 +141,33 @@ def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
             yield from flatten(item, depth - 1)
         else:
             yield item
+
+
+def interleave(*iterables: Iterable[T]) -> Iterator[T]:
+    """Yield items from each of ``iterables`` in round-robin order.
+
+    Each round takes one item from every iterable that still has one, in the
+    order the iterables were given. An iterable that runs out is dropped from
+    later rounds while the others keep going, so the result is exhausted only
+    once every input is — not just the shortest, unlike ``zip``.
+
+        >>> list(interleave([1, 2, 3], [10, 20], [100]))
+        [1, 10, 100, 2, 20, 3]
+
+    Called with no iterables, or only empty ones, yields nothing. Raises
+    ``TypeError`` if an argument is not iterable.
+    """
+    iterators = [iter(it) for it in iterables]
+    while iterators:
+        still_going = []
+        for iterator in iterators:
+            try:
+                item = next(iterator)
+            except StopIteration:
+                continue
+            yield item
+            still_going.append(iterator)
+        iterators = still_going
 
 
 def group_by(
