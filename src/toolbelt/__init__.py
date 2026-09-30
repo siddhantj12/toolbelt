@@ -10,6 +10,7 @@ from toolbelt.iterables import (
     group_by,
     interleave,
     partition,
+    unique_justseen,
     windowed,
 )
 from toolbelt.mapping import deep_merge, get_path, invert
@@ -32,6 +33,7 @@ __all__ = [
     "slugify",
     "strip_ansi",
     "truncate",
+    "unique_justseen",
     "windowed",
     "word_wrap",
 ]

@@ -10,6 +10,7 @@ from toolbelt.iterables import (
     group_by,
     interleave,
     partition,
+    unique_justseen,
     windowed,
 )
 
@@ -221,3 +222,21 @@ class TestFlatten:
     def test_negative_depth_raises(self):
         with pytest.raises(ValueError):
             list(flatten([1, 2], depth=-1))
+
+
+class TestUniqueJustseen:
+    def test_drops_only_consecutive_duplicates(self):
+        assert list(unique_justseen([1, 1, 2, 2, 1, 1])) == [1, 2, 1]
+
+    def test_key_compares_by_derived_value(self):
+        assert list(unique_justseen(["A", "a", "B"], key=str.lower)) == ["A", "B"]
+
+    def test_empty_input_yields_nothing(self):
+        assert list(unique_justseen([])) == []
+
+    def test_key_raising_propagates(self):
+        def boom(_item):
+            raise ValueError("bad key")
+
+        with pytest.raises(ValueError):
+            list(unique_justseen([1, 2], key=boom))

@@ -19,6 +19,7 @@ __all__ = [
     "group_by",
     "interleave",
     "partition",
+    "unique_justseen",
     "windowed",
 ]
 
@@ -53,6 +54,33 @@ def dedupe(
         if marker not in seen:
             seen.add(marker)
             yield item
+
+
+def unique_justseen(
+    iterable: Iterable[T], *, key: Callable[[T], Hashable] | None = None
+) -> Iterator[T]:
+    """Yield items from ``iterable``, dropping each that equals the item just before it.
+
+    Unlike ``dedupe``, only *consecutive* duplicates are collapsed — the same
+    value can reappear later once a different value has come between the
+    occurrences. ``key`` selects the value used for comparison, which lets
+    unhashable items be compared by a hashable attribute.
+
+        >>> list(unique_justseen([1, 1, 2, 2, 1, 1]))
+        [1, 2, 1]
+        >>> list(unique_justseen(["A", "a", "B"], key=str.lower))
+        ['A', 'B']
+
+    Empty input yields nothing. If ``key`` raises, the exception propagates
+    and iteration stops there.
+    """
+    sentinel = object()
+    previous: Hashable = sentinel
+    for item in iterable:
+        marker = item if key is None else key(item)
+        if marker != previous:
+            yield item
+        previous = marker
 
 
 def windowed(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
