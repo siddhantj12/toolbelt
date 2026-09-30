@@ -44,7 +44,6 @@ box in the same pull request that lands the work.
 
 ### `toolbelt.timing` (new module)
 - [ ] `Timer` context manager — wall-clock elapsed time with a readable `repr`.
-- [ ] `retry(attempts, backoff)` — decorator with exponential backoff.
 
 ## Infrastructure
 - [ ] Add mypy to CI once the public surface stabilises.
@@ -54,4 +53,5 @@ box in the same pull request that lands the work.
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
+- [x] `retry` (`toolbelt.timing`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.

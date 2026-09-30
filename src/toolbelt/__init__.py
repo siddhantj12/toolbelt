@@ -14,6 +14,7 @@ from toolbelt.iterables import (
 )
 from toolbelt.mapping import deep_merge, get_path, invert
 from toolbelt.text import common_prefix, slugify, strip_ansi, truncate, word_wrap
+from toolbelt.timing import retry
 
 __all__ = [
     "batched",
@@ -29,6 +30,7 @@ __all__ = [
     "interleave",
     "invert",
     "partition",
+    "retry",
     "slugify",
     "strip_ansi",
     "truncate",
