@@ -10,6 +10,7 @@ from toolbelt.iterables import (
     group_by,
     interleave,
     partition,
+    split_at,
     unique_justseen,
     windowed,
 )
@@ -240,3 +241,26 @@ class TestUniqueJustseen:
 
         with pytest.raises(ValueError):
             list(unique_justseen([1, 2], key=boom))
+
+
+class TestSplitAt:
+    def test_splits_on_matching_items_dropping_them(self):
+        result = list(split_at([1, 2, 0, 3, 4, 0, 5], lambda n: n == 0))
+        assert result == [[1, 2], [3, 4], [5]]
+
+    def test_consecutive_and_boundary_matches_yield_empty_groups(self):
+        result = list(split_at([0, 1, 0, 0, 2], lambda n: n == 0))
+        assert result == [[], [1], [], [2]]
+
+    def test_no_match_yields_whole_input_as_one_group(self):
+        assert list(split_at([1, 2, 3], lambda n: n == 0)) == [[1, 2, 3]]
+
+    def test_empty_input_yields_one_empty_group(self):
+        assert list(split_at([], lambda n: n == 0)) == [[]]
+
+    def test_predicate_raising_propagates(self):
+        def boom(_item):
+            raise ValueError("bad predicate")
+
+        with pytest.raises(ValueError):
+            list(split_at([1, 2], boom))

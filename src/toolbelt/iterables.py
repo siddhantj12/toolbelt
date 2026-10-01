@@ -19,6 +19,7 @@ __all__ = [
     "group_by",
     "interleave",
     "partition",
+    "split_at",
     "unique_justseen",
     "windowed",
 ]
@@ -196,6 +197,36 @@ def interleave(*iterables: Iterable[T]) -> Iterator[T]:
             yield item
             still_going.append(iterator)
         iterators = still_going
+
+
+def split_at(
+    iterable: Iterable[T], predicate: Callable[[T], bool]
+) -> Iterator[list[T]]:
+    """Split ``iterable`` into lists at items matching ``predicate``, dropping them.
+
+    Yields one list for each run of items between matches — like ``str.split``,
+    there is always at least one group, so a ``predicate`` that never matches
+    yields the whole input as a single list, and empty input yields one empty
+    list. Two matches in a row, or a match at either end, produce an empty
+    list in that position rather than skipping it.
+
+        >>> list(split_at([1, 2, 0, 3, 4, 0, 5], lambda n: n == 0))
+        [[1, 2], [3, 4], [5]]
+        >>> list(split_at([0, 1, 0], lambda n: n == 0))
+        [[], [1], []]
+        >>> list(split_at([], lambda n: n == 0))
+        [[]]
+
+    If ``predicate`` raises, the exception propagates and iteration stops there.
+    """
+    group: list[T] = []
+    for item in iterable:
+        if predicate(item):
+            yield group
+            group = []
+        else:
+            group.append(item)
+    yield group
 
 
 def group_by(

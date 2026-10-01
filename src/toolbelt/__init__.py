@@ -10,6 +10,7 @@ from toolbelt.iterables import (
     group_by,
     interleave,
     partition,
+    split_at,
     unique_justseen,
     windowed,
 )
@@ -31,6 +32,7 @@ __all__ = [
     "invert",
     "partition",
     "slugify",
+    "split_at",
     "strip_ansi",
     "truncate",
     "unique_justseen",
