@@ -12,7 +12,6 @@ box in the same pull request that lands the work.
 
 `toolbelt.iterables`
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
-- [ ] `nth(iterable, n, default=None)` — item at index `n` of any iterable without raising.
 - [ ] `peekable(iterable)` — iterator wrapper with `.peek(default)` that doesn't consume.
 
 `toolbelt.text`
@@ -51,6 +50,6 @@ box in the same pull request that lands the work.
 
 ## Done
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
-- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen` (`toolbelt.iterables`)
+- [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen`, `nth` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.
