@@ -9,6 +9,7 @@ from toolbelt.iterables import (
     flatten,
     group_by,
     interleave,
+    nth,
     partition,
     unique_justseen,
     windowed,
@@ -80,6 +81,35 @@ class TestFirst:
 
     def test_empty_input_returns_given_default(self):
         assert first([], default="none") == "none"
+
+
+class TestNth:
+    def test_returns_item_at_index(self):
+        assert nth([10, 20, 30], 1) == 20
+
+    def test_index_zero_returns_first_item(self):
+        assert nth([10, 20, 30], 0) == 10
+
+    def test_index_past_end_returns_default(self):
+        assert nth([10, 20, 30], 5, default="missing") == "missing"
+
+    def test_empty_input_returns_default(self):
+        assert nth([], 0, default="empty") == "empty"
+
+    def test_default_is_none_when_not_given(self):
+        assert nth([], 0) is None
+
+    def test_only_consumes_up_to_requested_index(self):
+        def items():
+            yield 1
+            yield 2
+            raise AssertionError("should not be consumed")
+
+        assert nth(items(), 1) == 2
+
+    def test_negative_n_raises(self):
+        with pytest.raises(ValueError):
+            nth([1, 2, 3], -1)
 
     def test_only_consumes_one_item_from_a_generator(self):
         seen = []

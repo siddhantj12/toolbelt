@@ -18,6 +18,7 @@ __all__ = [
     "flatten",
     "group_by",
     "interleave",
+    "nth",
     "partition",
     "unique_justseen",
     "windowed",
@@ -144,6 +145,31 @@ def first(iterable: Iterable[T], default: T | None = None) -> T | None:
     for item in iterable:
         return item
     return default
+
+
+def nth(iterable: Iterable[T], n: int, default: T | None = None) -> T | None:
+    """Return the item at index ``n`` of ``iterable``, or ``default`` if it's too short.
+
+    Consumes at most ``n + 1`` items, so it works lazily on any iterable,
+    including an infinite or single-pass generator. ``n`` counts from 0, like
+    sequence indexing.
+
+        >>> nth([10, 20, 30], 1)
+        20
+        >>> nth([10, 20, 30], 5, default="missing")
+        'missing'
+        >>> nth(iter([]), 0, default="empty")
+        'empty'
+
+    Raises ``ValueError`` if ``n`` is negative, since a single-pass iterable
+    has no way to count backward from its end.
+    """
+    if n < 0:
+        raise ValueError(f"n must be at least 0, got {n}")
+    try:
+        return next(islice(iterable, n, None))
+    except StopIteration:
+        return default
 
 
 def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
