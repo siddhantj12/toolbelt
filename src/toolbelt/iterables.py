@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import deque
 from collections.abc import Hashable, Iterable, Iterator
 from itertools import islice
-from typing import Callable, TypeVar
+from typing import Any, Callable, Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -20,6 +20,7 @@ __all__ = [
     "interleave",
     "nth",
     "partition",
+    "peekable",
     "unique_justseen",
     "windowed",
 ]
@@ -222,6 +223,59 @@ def interleave(*iterables: Iterable[T]) -> Iterator[T]:
             yield item
             still_going.append(iterator)
         iterators = still_going
+
+
+class peekable(Generic[T]):
+    """Iterator wrapper that lets you look at the next item without consuming it.
+
+    Wraps ``iterable`` for one-pass iteration via ``next()`` or a ``for``
+    loop, same as the original would give. ``peek(default)`` looks at the
+    item the next ``next()`` call would return, without advancing — calling
+    ``peek`` repeatedly keeps returning that same item until ``next()`` (or
+    another iteration step) actually consumes it.
+
+        >>> it = peekable([1, 2, 3])
+        >>> it.peek()
+        1
+        >>> it.peek()
+        1
+        >>> next(it)
+        1
+        >>> list(it)
+        [2, 3]
+
+    With no ``default``, peeking past the end raises ``StopIteration`` — the
+    same error ``next()`` would raise on an empty iterator. Pass ``default``
+    to get a value back instead of the exception:
+
+        >>> peekable([]).peek(default="empty")
+        'empty'
+    """
+
+    _unset = object()
+
+    def __init__(self, iterable: Iterable[T]) -> None:
+        self._iterator = iter(iterable)
+        self._cache: list[T] = []
+
+    def __iter__(self) -> peekable[T]:
+        return self
+
+    def __next__(self) -> T:
+        if self._cache:
+            return self._cache.pop(0)
+        return next(self._iterator)
+
+    def peek(self, default: Any = _unset) -> Any:
+        """Return the next item without consuming it; see class docstring."""
+        if not self._cache:
+            try:
+                self._cache.append(next(self._iterator))
+            except StopIteration:
+                if default is peekable._unset:
+                    raise
+                return default
+        return self._cache[0]
 
 
 def group_by(

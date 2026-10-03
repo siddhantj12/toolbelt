@@ -11,6 +11,7 @@ from toolbelt.iterables import (
     interleave,
     nth,
     partition,
+    peekable,
     unique_justseen,
     windowed,
 )
@@ -32,6 +33,7 @@ __all__ = [
     "invert",
     "nth",
     "partition",
+    "peekable",
     "slugify",
     "strip_ansi",
     "truncate",
