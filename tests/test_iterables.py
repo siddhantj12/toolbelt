@@ -11,6 +11,7 @@ from toolbelt.iterables import (
     interleave,
     nth,
     partition,
+    peekable,
     unique_justseen,
     windowed,
 )
@@ -270,3 +271,33 @@ class TestUniqueJustseen:
 
         with pytest.raises(ValueError):
             list(unique_justseen([1, 2], key=boom))
+
+
+class TestPeekable:
+    def test_peek_does_not_consume(self):
+        it = peekable([1, 2, 3])
+        assert it.peek() == 1
+        assert it.peek() == 1
+        assert list(it) == [1, 2, 3]
+
+    def test_next_consumes_the_peeked_item(self):
+        it = peekable([1, 2, 3])
+        assert it.peek() == 1
+        assert next(it) == 1
+        assert list(it) == [2, 3]
+
+    def test_empty_input_peek_without_default_raises(self):
+        with pytest.raises(StopIteration):
+            peekable([]).peek()
+
+    def test_empty_input_peek_with_default_returns_default(self):
+        assert peekable([]).peek(default="empty") == "empty"
+
+    def test_empty_input_iterates_to_nothing(self):
+        assert list(peekable([])) == []
+
+    def test_peek_past_end_of_nonempty_input_raises(self):
+        it = peekable([1])
+        assert next(it) == 1
+        with pytest.raises(StopIteration):
+            it.peek()
