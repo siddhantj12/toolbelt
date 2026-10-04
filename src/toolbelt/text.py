@@ -43,6 +43,10 @@ def common_prefix(strings: Iterable[str]) -> str:
 
 _ANSI_ESCAPE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
+_ACRONYM_BOUNDARY = re.compile(r"([A-Z]+)([A-Z][a-z])")
+_CASE_BOUNDARY = re.compile(r"([a-z0-9])([A-Z])")
+_WORD_SEPARATORS = re.compile(r"[\s_-]+")
+
 
 def slugify(value: str, *, separator: str = "-") -> str:
     """Return a lowercase, URL-safe slug built from ``value``.
@@ -143,3 +147,31 @@ def strip_ansi(text: str) -> str:
     if not isinstance(text, str):
         raise TypeError(f"text must be a str, got {type(text).__name__}")
     return _ANSI_ESCAPE.sub("", text)
+
+
+def snake_case(text: str) -> str:
+    """Convert camelCase, PascalCase, kebab-case or spaced text to snake_case.
+
+    A run of two or more uppercase letters is treated as an acronym and kept
+    together as one word, splitting off only the capital that starts the next
+    word — so ``"HTTPServer"`` becomes ``"http_server"``, not
+    ``"h_t_t_p_server"``. Existing ``-``, ``_`` and whitespace are also
+    treated as word boundaries, so kebab-case and already-separated input
+    convert the same way.
+
+        >>> snake_case("parseHTTPResponse")
+        'parse_http_response'
+        >>> snake_case("already-snake_case Words")
+        'already_snake_case_words'
+
+    ``""`` returns ``""``. Raises ``TypeError`` if ``text`` is not a ``str``.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"text must be a str, got {type(text).__name__}")
+    if not text:
+        return ""
+
+    marked = _ACRONYM_BOUNDARY.sub(r"\1_\2", text)
+    marked = _CASE_BOUNDARY.sub(r"\1_\2", marked)
+    words = _WORD_SEPARATORS.split(marked.strip())
+    return "_".join(word for word in words if word).lower()

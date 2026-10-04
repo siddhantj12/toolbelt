@@ -16,7 +16,14 @@ from toolbelt.iterables import (
     windowed,
 )
 from toolbelt.mapping import deep_merge, get_path, invert
-from toolbelt.text import common_prefix, slugify, strip_ansi, truncate, word_wrap
+from toolbelt.text import (
+    common_prefix,
+    slugify,
+    snake_case,
+    strip_ansi,
+    truncate,
+    word_wrap,
+)
 
 __all__ = [
     "batched",
@@ -35,6 +42,7 @@ __all__ = [
     "partition",
     "peekable",
     "slugify",
+    "snake_case",
     "strip_ansi",
     "truncate",
     "unique_justseen",
