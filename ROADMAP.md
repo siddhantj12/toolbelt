@@ -14,7 +14,6 @@ box in the same pull request that lands the work.
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
 `toolbelt.text`
-- [ ] `snake_case(text)` — from camelCase, PascalCase, kebab and spaced input, acronyms kept together.
 - [ ] `camel_case(text)` — the inverse, with a documented rule for acronyms.
 - [ ] `ordinal(n)` — `1st`, `22nd`, `113th`, including the 11–13 exceptions.
 - [ ] `pluralize(count, singular, plural=None)` — `"1 file"`, `"3 files"`.
@@ -48,7 +47,7 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
-- [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi` (`toolbelt.text`)
+- [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi`, `snake_case` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen`, `nth`, `peekable` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.

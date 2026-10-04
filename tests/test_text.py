@@ -1,6 +1,13 @@
 import pytest
 
-from toolbelt.text import common_prefix, slugify, strip_ansi, truncate, word_wrap
+from toolbelt.text import (
+    common_prefix,
+    slugify,
+    snake_case,
+    strip_ansi,
+    truncate,
+    word_wrap,
+)
 
 
 class TestCommonPrefix:
@@ -133,3 +140,33 @@ class TestStripAnsi:
     def test_non_string_raises_type_error(self):
         with pytest.raises(TypeError):
             strip_ansi(123)
+
+
+class TestSnakeCase:
+    def test_converts_camel_case(self):
+        assert snake_case("helloWorld") == "hello_world"
+
+    def test_converts_pascal_case(self):
+        assert snake_case("HelloWorld") == "hello_world"
+
+    def test_converts_kebab_case(self):
+        assert snake_case("hello-world") == "hello_world"
+
+    def test_converts_spaced_words(self):
+        assert snake_case("Hello World") == "hello_world"
+
+    def test_keeps_leading_acronym_together(self):
+        assert snake_case("HTTPServer") == "http_server"
+
+    def test_keeps_mid_word_acronym_together(self):
+        assert snake_case("parseHTTPResponse") == "parse_http_response"
+
+    def test_mixed_separators_normalise_to_underscore(self):
+        assert snake_case("already-snake_case Words") == "already_snake_case_words"
+
+    def test_empty_input_returns_empty_string(self):
+        assert snake_case("") == ""
+
+    def test_non_string_raises_type_error(self):
+        with pytest.raises(TypeError):
+            snake_case(123)
