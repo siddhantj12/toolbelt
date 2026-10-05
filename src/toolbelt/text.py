@@ -175,3 +175,34 @@ def snake_case(text: str) -> str:
     marked = _CASE_BOUNDARY.sub(r"\1_\2", marked)
     words = _WORD_SEPARATORS.split(marked.strip())
     return "_".join(word for word in words if word).lower()
+
+
+def camel_case(text: str) -> str:
+    """Convert snake_case, kebab-case or spaced text to camelCase.
+
+    Splits on ``-``, ``_`` and whitespace. The first word is always
+    lowercased, matching camelCase convention. Each later word is
+    capitalized — except one that is already all uppercase and more than one
+    character long, which is treated as an acronym and kept exactly as
+    written rather than reduced to a single capital. So a caller that wants
+    ``"HTTP"`` rather than ``"Http"`` in the output spells it that way in the
+    input, anywhere but the first word.
+
+        >>> camel_case("convert_to_camel_case")
+        'convertToCamelCase'
+        >>> camel_case("parse_HTTP_response")
+        'parseHTTPResponse'
+
+    ``""`` returns ``""``. Raises ``TypeError`` if ``text`` is not a ``str``.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"text must be a str, got {type(text).__name__}")
+
+    words = [word for word in _WORD_SEPARATORS.split(text.strip()) if word]
+    if not words:
+        return ""
+
+    def cased(word: str) -> str:
+        return word if word.isupper() and len(word) > 1 else word.capitalize()
+
+    return words[0].lower() + "".join(cased(word) for word in words[1:])

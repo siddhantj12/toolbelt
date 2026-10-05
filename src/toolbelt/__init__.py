@@ -17,6 +17,7 @@ from toolbelt.iterables import (
 )
 from toolbelt.mapping import deep_merge, get_path, invert
 from toolbelt.text import (
+    camel_case,
     common_prefix,
     slugify,
     snake_case,
@@ -27,6 +28,7 @@ from toolbelt.text import (
 
 __all__ = [
     "batched",
+    "camel_case",
     "chunk_by",
     "common_prefix",
     "count_by",
