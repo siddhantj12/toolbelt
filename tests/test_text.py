@@ -1,6 +1,7 @@
 import pytest
 
 from toolbelt.text import (
+    camel_case,
     common_prefix,
     slugify,
     snake_case,
@@ -170,3 +171,30 @@ class TestSnakeCase:
     def test_non_string_raises_type_error(self):
         with pytest.raises(TypeError):
             snake_case(123)
+
+
+class TestCamelCase:
+    def test_converts_snake_case(self):
+        assert camel_case("convert_to_camel_case") == "convertToCamelCase"
+
+    def test_converts_kebab_case(self):
+        assert camel_case("convert-to-camel-case") == "convertToCamelCase"
+
+    def test_converts_spaced_words(self):
+        assert camel_case("convert to camel case") == "convertToCamelCase"
+
+    def test_keeps_mid_word_acronym_uppercase(self):
+        assert camel_case("parse_HTTP_response") == "parseHTTPResponse"
+
+    def test_lowercases_leading_acronym(self):
+        assert camel_case("HTTP_server") == "httpServer"
+
+    def test_single_word_is_lowercased(self):
+        assert camel_case("Hello") == "hello"
+
+    def test_empty_input_returns_empty_string(self):
+        assert camel_case("") == ""
+
+    def test_non_string_raises_type_error(self):
+        with pytest.raises(TypeError):
+            camel_case(123)
