@@ -3,6 +3,7 @@ import pytest
 from toolbelt.text import (
     camel_case,
     common_prefix,
+    ordinal,
     slugify,
     snake_case,
     strip_ansi,
@@ -171,6 +172,40 @@ class TestSnakeCase:
     def test_non_string_raises_type_error(self):
         with pytest.raises(TypeError):
             snake_case(123)
+
+
+class TestOrdinal:
+    def test_common_suffixes(self):
+        assert ordinal(1) == "1st"
+        assert ordinal(2) == "2nd"
+        assert ordinal(3) == "3rd"
+        assert ordinal(4) == "4th"
+
+    def test_eleven_to_thirteen_are_always_th(self):
+        assert ordinal(11) == "11th"
+        assert ordinal(12) == "12th"
+        assert ordinal(13) == "13th"
+
+    def test_larger_numbers_ending_in_eleven_to_thirteen_are_th(self):
+        assert ordinal(111) == "111th"
+        assert ordinal(112) == "112th"
+        assert ordinal(113) == "113th"
+
+    def test_larger_numbers_follow_last_digit(self):
+        assert ordinal(21) == "21st"
+        assert ordinal(22) == "22nd"
+        assert ordinal(23) == "23rd"
+
+    def test_zero_is_th(self):
+        assert ordinal(0) == "0th"
+
+    def test_negative_numbers_keep_sign(self):
+        assert ordinal(-1) == "-1st"
+        assert ordinal(-12) == "-12th"
+
+    def test_non_int_raises_type_error(self):
+        with pytest.raises(TypeError):
+            ordinal("1")
 
 
 class TestCamelCase:

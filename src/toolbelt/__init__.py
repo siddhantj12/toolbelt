@@ -19,6 +19,7 @@ from toolbelt.mapping import deep_merge, get_path, invert
 from toolbelt.text import (
     camel_case,
     common_prefix,
+    ordinal,
     slugify,
     snake_case,
     strip_ansi,
@@ -41,6 +42,7 @@ __all__ = [
     "interleave",
     "invert",
     "nth",
+    "ordinal",
     "partition",
     "peekable",
     "slugify",
