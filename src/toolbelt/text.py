@@ -177,6 +177,38 @@ def snake_case(text: str) -> str:
     return "_".join(word for word in words if word).lower()
 
 
+def ordinal(n: int) -> str:
+    """Return the English ordinal string for an integer, e.g. ``"1st"``, ``"22nd"``.
+
+    The suffix is chosen from the last two digits of ``abs(n)``: ``11``,
+    ``12`` and ``13`` always take ``"th"`` (and so does any number ending in
+    them, like ``113``), even though they end in ``1``, ``2`` or ``3``.
+    Everything else follows the usual ``1`` → ``"st"``, ``2`` → ``"nd"``,
+    ``3`` → ``"rd"``, otherwise ``"th"`` rule. Negative numbers keep their
+    sign, with the suffix picked the same way.
+
+        >>> ordinal(1)
+        '1st'
+        >>> ordinal(22)
+        '22nd'
+        >>> ordinal(113)
+        '113th'
+        >>> ordinal(-2)
+        '-2nd'
+
+    ``0`` returns ``"0th"``. Raises ``TypeError`` if ``n`` is not an ``int``.
+    """
+    if not isinstance(n, int):
+        raise TypeError(f"n must be an int, got {type(n).__name__}")
+
+    last_two = abs(n) % 100
+    if 11 <= last_two <= 13:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(last_two % 10, "th")
+    return f"{n}{suffix}"
+
+
 def camel_case(text: str) -> str:
     """Convert snake_case, kebab-case or spaced text to camelCase.
 
