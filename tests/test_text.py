@@ -4,6 +4,7 @@ from toolbelt.text import (
     camel_case,
     common_prefix,
     ordinal,
+    pluralize,
     slugify,
     snake_case,
     strip_ansi,
@@ -233,3 +234,32 @@ class TestCamelCase:
     def test_non_string_raises_type_error(self):
         with pytest.raises(TypeError):
             camel_case(123)
+
+
+class TestPluralize:
+    def test_singular_count_uses_singular_form(self):
+        assert pluralize(1, "file") == "1 file"
+
+    def test_plural_count_appends_s_by_default(self):
+        assert pluralize(3, "file") == "3 files"
+
+    def test_zero_uses_plural_form(self):
+        assert pluralize(0, "file") == "0 files"
+
+    def test_negative_one_uses_singular_form(self):
+        assert pluralize(-1, "file") == "-1 file"
+
+    def test_other_negative_counts_use_plural_form(self):
+        assert pluralize(-3, "file") == "-3 files"
+
+    def test_irregular_plural_is_used_when_given(self):
+        assert pluralize(2, "child", "children") == "2 children"
+        assert pluralize(1, "child", "children") == "1 child"
+
+    def test_empty_singular_still_produces_a_result(self):
+        assert pluralize(1, "") == "1 "
+        assert pluralize(2, "") == "2 s"
+
+    def test_non_int_count_raises_type_error(self):
+        with pytest.raises(TypeError):
+            pluralize("1", "file")

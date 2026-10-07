@@ -238,3 +238,33 @@ def camel_case(text: str) -> str:
         return word if word.isupper() and len(word) > 1 else word.capitalize()
 
     return words[0].lower() + "".join(cased(word) for word in words[1:])
+
+
+def pluralize(count: int, singular: str, plural: str | None = None) -> str:
+    """Return ``"<count> <word>"`` with the singular or plural form chosen for you.
+
+    The singular form is used when ``abs(count) == 1``; every other count,
+    including ``0`` and negative counts other than ``-1``, uses the plural
+    form — matching ordinary English usage. ``plural`` defaults to
+    ``singular + "s"``, which covers most words; pass it explicitly for an
+    irregular plural.
+
+        >>> pluralize(1, "file")
+        '1 file'
+        >>> pluralize(3, "file")
+        '3 files'
+        >>> pluralize(0, "file")
+        '0 files'
+        >>> pluralize(2, "child", "children")
+        '2 children'
+
+    Raises ``TypeError`` if ``count`` is not an ``int``.
+    """
+    if not isinstance(count, int):
+        raise TypeError(f"count must be an int, got {type(count).__name__}")
+
+    if abs(count) == 1:
+        word = singular
+    else:
+        word = plural if plural is not None else singular + "s"
+    return f"{count} {word}"
