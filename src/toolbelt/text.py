@@ -240,6 +240,48 @@ def camel_case(text: str) -> str:
     return words[0].lower() + "".join(cased(word) for word in words[1:])
 
 
+_DECIMAL_UNITS = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+_BINARY_UNITS = ("B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB")
+
+
+def human_bytes(n: float, *, binary: bool = True) -> str:
+    """Format a byte count as a human-readable string, e.g. ``"1.5 MiB"``.
+
+    ``binary`` (the default) scales by 1024 and uses ``KiB``/``MiB``/...;
+    set it to ``False`` to scale by 1000 and use ``KB``/``MB``/... instead.
+    The value is divided down until it fits under the base, then shown with
+    one decimal place; values under the base are shown as a bare integer
+    byte count with no decimal.
+
+        >>> human_bytes(1536)
+        '1.5 KiB'
+        >>> human_bytes(1_600_000, binary=False)
+        '1.6 MB'
+        >>> human_bytes(0)
+        '0 B'
+
+    Raises ``TypeError`` if ``n`` is not an ``int`` or ``float``, and
+    ``ValueError`` if it is negative.
+    """
+    if isinstance(n, bool) or not isinstance(n, (int, float)):
+        raise TypeError(f"n must be an int or float, got {type(n).__name__}")
+    if n < 0:
+        raise ValueError(f"n must not be negative, got {n}")
+
+    base = 1024 if binary else 1000
+    units = _BINARY_UNITS if binary else _DECIMAL_UNITS
+
+    value = float(n)
+    unit_index = 0
+    while value >= base and unit_index < len(units) - 1:
+        value /= base
+        unit_index += 1
+
+    if unit_index == 0:
+        return f"{int(value)} {units[0]}"
+    return f"{value:.1f} {units[unit_index]}"
+
+
 def pluralize(count: int, singular: str, plural: str | None = None) -> str:
     """Return ``"<count> <word>"`` with the singular or plural form chosen for you.
 

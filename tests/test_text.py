@@ -3,6 +3,7 @@ import pytest
 from toolbelt.text import (
     camel_case,
     common_prefix,
+    human_bytes,
     ordinal,
     pluralize,
     slugify,
@@ -263,3 +264,36 @@ class TestPluralize:
     def test_non_int_count_raises_type_error(self):
         with pytest.raises(TypeError):
             pluralize("1", "file")
+
+
+class TestHumanBytes:
+    def test_bytes_under_base_are_a_bare_integer(self):
+        assert human_bytes(500) == "500 B"
+
+    def test_zero_is_zero_bytes(self):
+        assert human_bytes(0) == "0 B"
+
+    def test_binary_scaling_uses_1024_and_i_units(self):
+        assert human_bytes(1536) == "1.5 KiB"
+        assert human_bytes(1024) == "1.0 KiB"
+
+    def test_decimal_scaling_uses_1000_and_plain_units(self):
+        assert human_bytes(1_600_000, binary=False) == "1.6 MB"
+
+    def test_float_input_is_accepted(self):
+        assert human_bytes(1536.0) == "1.5 KiB"
+
+    def test_large_value_climbs_multiple_units(self):
+        assert human_bytes(1024**3) == "1.0 GiB"
+
+    def test_negative_raises_value_error(self):
+        with pytest.raises(ValueError):
+            human_bytes(-1)
+
+    def test_non_numeric_raises_type_error(self):
+        with pytest.raises(TypeError):
+            human_bytes("1024")
+
+    def test_bool_raises_type_error(self):
+        with pytest.raises(TypeError):
+            human_bytes(True)
