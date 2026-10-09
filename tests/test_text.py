@@ -4,6 +4,7 @@ from toolbelt.text import (
     camel_case,
     common_prefix,
     human_bytes,
+    mask,
     ordinal,
     pluralize,
     slugify,
@@ -264,6 +265,32 @@ class TestPluralize:
     def test_non_int_count_raises_type_error(self):
         with pytest.raises(TypeError):
             pluralize("1", "file")
+
+
+class TestMask:
+    def test_hides_all_but_last_visible_characters(self):
+        assert mask("1234567812345678") == "************5678"
+
+    def test_custom_visible_count(self):
+        assert mask("1234567812345678", visible=2) == "**************78"
+
+    def test_custom_mask_character(self):
+        assert mask("secret", visible=0, char="#") == "######"
+
+    def test_value_no_longer_than_visible_is_unchanged(self):
+        assert mask("hi", visible=4) == "hi"
+        assert mask("ab", visible=2) == "ab"
+
+    def test_empty_input_returns_empty_string(self):
+        assert mask("") == ""
+
+    def test_negative_visible_raises_value_error(self):
+        with pytest.raises(ValueError):
+            mask("secret", visible=-1)
+
+    def test_multi_character_char_raises_value_error(self):
+        with pytest.raises(ValueError):
+            mask("secret", char="**")
 
 
 class TestHumanBytes:
