@@ -282,6 +282,36 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
     return f"{value:.1f} {units[unit_index]}"
 
 
+def mask(value: str, visible: int = 4, *, char: str = "*") -> str:
+    """Hide all but the last ``visible`` characters of ``value``.
+
+    Every hidden character is replaced one-for-one with ``char``, so the
+    result is always the same length as ``value`` — handy for displaying a
+    secret or card number without fully exposing it. When ``value`` has
+    ``visible`` characters or fewer, there is nothing to hide and it is
+    returned unchanged.
+
+        >>> mask("1234567812345678")
+        '************5678'
+        >>> mask("hi", visible=4)
+        'hi'
+        >>> mask("secret", visible=0, char="#")
+        '######'
+
+    ``""`` returns ``""``. Raises ``ValueError`` if ``visible`` is negative,
+    or if ``char`` is not exactly one character.
+    """
+    if visible < 0:
+        raise ValueError(f"visible must be at least 0, got {visible}")
+    if len(char) != 1:
+        raise ValueError(f"char must be a single character, got {char!r}")
+    if len(value) <= visible:
+        return value
+
+    hidden = len(value) - visible
+    return char * hidden + value[hidden:]
+
+
 def pluralize(count: int, singular: str, plural: str | None = None) -> str:
     """Return ``"<count> <word>"`` with the singular or plural form chosen for you.
 
