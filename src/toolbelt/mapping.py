@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from collections.abc import Hashable, Mapping
+from collections.abc import Hashable, Iterable, Mapping
 from typing import Any, TypeVar
 
 K = TypeVar("K")
 
 V = TypeVar("V", bound=Hashable)
 
-__all__ = ["deep_merge", "get_path", "invert"]
+__all__ = ["deep_merge", "get_path", "invert", "omit", "pick"]
 
 
 def deep_merge(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
@@ -63,6 +63,48 @@ def get_path(mapping: Mapping[str, Any], path: str, default: Any = None) -> Any:
             return default
         current = current[key]
     return current
+
+
+def pick(mapping: Mapping[K, Any], keys: Iterable[K]) -> dict[K, Any]:
+    """Return a new dict with only the entries of ``mapping`` whose key is in ``keys``.
+
+    A key in ``keys`` that isn't present in ``mapping`` is silently ignored, so
+    ``pick`` never raises for an unknown key. Entries keep ``mapping``'s
+    iteration order, not ``keys``'s. ``mapping`` itself is not modified.
+
+        >>> pick({"a": 1, "b": 2, "c": 3}, ["a", "c"])
+        {'a': 1, 'c': 3}
+        >>> pick({"a": 1, "b": 2}, [])
+        {}
+
+    Raises ``TypeError`` if ``mapping`` is not a ``Mapping``.
+    """
+    if not isinstance(mapping, Mapping):
+        raise TypeError(f"mapping must be a Mapping, got {type(mapping).__name__}")
+
+    wanted = set(keys)
+    return {key: value for key, value in mapping.items() if key in wanted}
+
+
+def omit(mapping: Mapping[K, Any], keys: Iterable[K]) -> dict[K, Any]:
+    """Return a new dict with ``mapping``'s entries excluding ``keys``.
+
+    A key in ``keys`` that isn't present in ``mapping`` is silently ignored, so
+    ``omit`` never raises for an unknown key. Remaining entries keep
+    ``mapping``'s iteration order. ``mapping`` itself is not modified.
+
+        >>> omit({"a": 1, "b": 2, "c": 3}, ["b"])
+        {'a': 1, 'c': 3}
+        >>> omit({"a": 1, "b": 2}, [])
+        {'a': 1, 'b': 2}
+
+    Raises ``TypeError`` if ``mapping`` is not a ``Mapping``.
+    """
+    if not isinstance(mapping, Mapping):
+        raise TypeError(f"mapping must be a Mapping, got {type(mapping).__name__}")
+
+    excluded = set(keys)
+    return {key: value for key, value in mapping.items() if key not in excluded}
 
 
 def invert(mapping: Mapping[K, V]) -> dict[V, K]:

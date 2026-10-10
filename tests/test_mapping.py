@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.mapping import deep_merge, get_path, invert
+from toolbelt.mapping import deep_merge, get_path, invert, omit, pick
 
 
 class TestDeepMerge:
@@ -51,6 +51,52 @@ class TestGetPath:
     def test_non_mapping_argument_raises(self):
         with pytest.raises(TypeError):
             get_path(["a", "b"], "a.b")
+
+
+class TestPick:
+    def test_keeps_only_given_keys(self):
+        assert pick({"a": 1, "b": 2, "c": 3}, ["a", "c"]) == {"a": 1, "c": 3}
+
+    def test_ignores_unknown_keys(self):
+        assert pick({"a": 1}, ["a", "z"]) == {"a": 1}
+
+    def test_empty_keys_returns_empty_dict(self):
+        assert pick({"a": 1, "b": 2}, []) == {}
+
+    def test_empty_mapping_returns_empty_dict(self):
+        assert pick({}, ["a"]) == {}
+
+    def test_does_not_mutate_input(self):
+        original = {"a": 1, "b": 2}
+        pick(original, ["a"])
+        assert original == {"a": 1, "b": 2}
+
+    def test_non_mapping_argument_raises(self):
+        with pytest.raises(TypeError):
+            pick(["a", "b"], ["a"])
+
+
+class TestOmit:
+    def test_drops_given_keys(self):
+        assert omit({"a": 1, "b": 2, "c": 3}, ["b"]) == {"a": 1, "c": 3}
+
+    def test_ignores_unknown_keys(self):
+        assert omit({"a": 1}, ["z"]) == {"a": 1}
+
+    def test_empty_keys_returns_full_copy(self):
+        assert omit({"a": 1, "b": 2}, []) == {"a": 1, "b": 2}
+
+    def test_empty_mapping_returns_empty_dict(self):
+        assert omit({}, ["a"]) == {}
+
+    def test_does_not_mutate_input(self):
+        original = {"a": 1, "b": 2}
+        omit(original, ["a"])
+        assert original == {"a": 1, "b": 2}
+
+    def test_non_mapping_argument_raises(self):
+        with pytest.raises(TypeError):
+            omit(["a", "b"], ["a"])
 
 
 class TestInvert:

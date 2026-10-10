@@ -15,7 +15,7 @@ from toolbelt.iterables import (
     unique_justseen,
     windowed,
 )
-from toolbelt.mapping import deep_merge, get_path, invert
+from toolbelt.mapping import deep_merge, get_path, invert, omit, pick
 from toolbelt.text import (
     camel_case,
     common_prefix,
@@ -47,9 +47,11 @@ __all__ = [
     "invert",
     "mask",
     "nth",
+    "omit",
     "ordinal",
     "partition",
     "peekable",
+    "pick",
     "pluralize",
     "slugify",
     "snake_case",

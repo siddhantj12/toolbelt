@@ -14,7 +14,6 @@ box in the same pull request that lands the work.
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
 `toolbelt.mapping`
-- [ ] `pick(mapping, keys)` and `omit(mapping, keys)` — key subsetting as new dicts.
 - [ ] `set_path(mapping, "a.b.c", value)` — new dict with a nested value set, intermediates created.
 - [ ] `flatten_dict(mapping, sep=".")` — nested dict to dotted keys.
 - [ ] `unflatten_dict(mapping, sep=".")` — the inverse, raising on key collisions.
@@ -42,5 +41,5 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi`, `snake_case`, `camel_case`, `ordinal`, `pluralize`, `human_bytes`, `mask` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen`, `nth`, `peekable` (`toolbelt.iterables`)
-- [x] `deep_merge`, `get_path`, `invert` (`toolbelt.mapping`)
+- [x] `deep_merge`, `get_path`, `invert`, `pick`, `omit` (`toolbelt.mapping`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.
