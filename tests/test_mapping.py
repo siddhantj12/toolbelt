@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.mapping import deep_merge, get_path, invert, omit, pick
+from toolbelt.mapping import deep_merge, get_path, invert, omit, pick, set_path
 
 
 class TestDeepMerge:
@@ -121,3 +121,30 @@ class TestInvert:
     def test_unhashable_value_raises(self):
         with pytest.raises(TypeError):
             invert({"a": [1, 2]})
+
+
+class TestSetPath:
+    def test_sets_nested_value_creating_intermediates(self):
+        assert set_path({"a": {"b": 1}}, "a.c.d", 2) == {"a": {"b": 1, "c": {"d": 2}}}
+
+    def test_single_segment_path(self):
+        assert set_path({"a": 1}, "b", 2) == {"a": 1, "b": 2}
+
+    def test_overwrites_non_dict_value_along_path(self):
+        assert set_path({"a": 1}, "a.b", 2) == {"a": {"b": 2}}
+
+    def test_empty_mapping_builds_full_path(self):
+        assert set_path({}, "a.b", 1) == {"a": {"b": 1}}
+
+    def test_does_not_mutate_input_or_its_nested_dicts(self):
+        original = {"a": {"b": 1}}
+        set_path(original, "a.c", 2)
+        assert original == {"a": {"b": 1}}
+
+    def test_non_mapping_argument_raises(self):
+        with pytest.raises(TypeError):
+            set_path(["a", "b"], "a.b", 1)
+
+    def test_empty_path_raises(self):
+        with pytest.raises(ValueError):
+            set_path({"a": 1}, "", 1)
