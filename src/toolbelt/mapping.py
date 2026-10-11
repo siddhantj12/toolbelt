@@ -9,7 +9,7 @@ K = TypeVar("K")
 
 V = TypeVar("V", bound=Hashable)
 
-__all__ = ["deep_merge", "get_path", "invert", "omit", "pick"]
+__all__ = ["deep_merge", "get_path", "invert", "omit", "pick", "set_path"]
 
 
 def deep_merge(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
@@ -105,6 +105,41 @@ def omit(mapping: Mapping[K, Any], keys: Iterable[K]) -> dict[K, Any]:
 
     excluded = set(keys)
     return {key: value for key, value in mapping.items() if key not in excluded}
+
+
+def set_path(mapping: Mapping[str, Any], path: str, value: Any) -> dict[str, Any]:
+    """Return a new dict with a value set along a ``"."``-separated path of keys.
+
+    Each segment of ``path`` becomes a nested dict; missing intermediates are
+    created automatically. If a segment along the way already holds a
+    non-dict value, it is replaced with a new nested dict rather than
+    raising — the same "last write wins" rule ``deep_merge`` applies.
+    ``mapping`` itself is not modified, nor are any of its nested dicts
+    touched by the path; everything along the path is copied first.
+
+        >>> set_path({"a": {"b": 1}}, "a.c.d", 2)
+        {'a': {'b': 1, 'c': {'d': 2}}}
+        >>> set_path({}, "a.b", 1)
+        {'a': {'b': 1}}
+
+    Raises ``TypeError`` if ``mapping`` is not a ``Mapping``, and
+    ``ValueError`` if ``path`` is empty.
+    """
+    if not isinstance(mapping, Mapping):
+        raise TypeError(f"mapping must be a Mapping, got {type(mapping).__name__}")
+    if not path:
+        raise ValueError("path must not be empty")
+
+    *parents, last = path.split(".")
+    result = dict(mapping)
+    current = result
+    for key in parents:
+        existing = current.get(key)
+        next_level = dict(existing) if isinstance(existing, Mapping) else {}
+        current[key] = next_level
+        current = next_level
+    current[last] = value
+    return result
 
 
 def invert(mapping: Mapping[K, V]) -> dict[V, K]:
