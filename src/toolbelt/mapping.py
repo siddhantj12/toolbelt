@@ -9,7 +9,7 @@ K = TypeVar("K")
 
 V = TypeVar("V", bound=Hashable)
 
-__all__ = ["deep_merge", "get_path", "invert", "omit", "pick", "set_path"]
+__all__ = ["deep_merge", "flatten_dict", "get_path", "invert", "omit", "pick", "set_path"]
 
 
 def deep_merge(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
@@ -139,6 +139,45 @@ def set_path(mapping: Mapping[str, Any], path: str, value: Any) -> dict[str, Any
         current[key] = next_level
         current = next_level
     current[last] = value
+    return result
+
+
+def flatten_dict(mapping: Mapping[str, Any], sep: str = ".") -> dict[str, Any]:
+    """Flatten a nested mapping into a single level, joining keys with ``sep``.
+
+    Descends into nested ``Mapping`` values, building each leaf's key by
+    joining the path to it with ``sep``. A key whose value is itself a
+    mapping never appears in the result — only leaves do — so a key holding
+    an *empty* nested mapping contributes no key at all, and that emptiness
+    is not recoverable from the result.
+
+        >>> flatten_dict({"a": 1, "b": {"c": 2, "d": {"e": 3}}})
+        {'a': 1, 'b.c': 2, 'b.d.e': 3}
+        >>> flatten_dict({"a": {"b": 1}}, sep="/")
+        {'a/b': 1}
+        >>> flatten_dict({"a": {}})
+        {}
+
+    If two different paths flatten to the same key (for example
+    ``{"a.b": 1, "a": {"b": 2}}``), the one encountered later in iteration
+    order wins, same as a ``dict`` literal with a repeated key.
+
+    Raises ``TypeError`` if ``mapping`` is not a ``Mapping``.
+    """
+    if not isinstance(mapping, Mapping):
+        raise TypeError(f"mapping must be a Mapping, got {type(mapping).__name__}")
+
+    result: dict[str, Any] = {}
+
+    def _walk(current: Mapping[str, Any], prefix: str) -> None:
+        for key, value in current.items():
+            full_key = f"{prefix}{sep}{key}" if prefix else str(key)
+            if isinstance(value, Mapping):
+                _walk(value, full_key)
+            else:
+                result[full_key] = value
+
+    _walk(mapping, "")
     return result
 
 

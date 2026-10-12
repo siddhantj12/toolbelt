@@ -1,6 +1,14 @@
 import pytest
 
-from toolbelt.mapping import deep_merge, get_path, invert, omit, pick, set_path
+from toolbelt.mapping import (
+    deep_merge,
+    flatten_dict,
+    get_path,
+    invert,
+    omit,
+    pick,
+    set_path,
+)
 
 
 class TestDeepMerge:
@@ -97,6 +105,33 @@ class TestOmit:
     def test_non_mapping_argument_raises(self):
         with pytest.raises(TypeError):
             omit(["a", "b"], ["a"])
+
+
+class TestFlattenDict:
+    def test_flattens_nested_mappings_with_dotted_keys(self):
+        nested = {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
+        assert flatten_dict(nested) == {"a": 1, "b.c": 2, "b.d.e": 3}
+
+    def test_custom_separator(self):
+        assert flatten_dict({"a": {"b": 1}}, sep="/") == {"a/b": 1}
+
+    def test_empty_mapping_returns_empty_dict(self):
+        assert flatten_dict({}) == {}
+
+    def test_empty_nested_mapping_contributes_no_key(self):
+        assert flatten_dict({"a": {}, "b": 1}) == {"b": 1}
+
+    def test_later_colliding_key_wins(self):
+        assert flatten_dict({"a.b": 1, "a": {"b": 2}}) == {"a.b": 2}
+
+    def test_does_not_mutate_input(self):
+        original = {"a": {"b": 1}}
+        flatten_dict(original)
+        assert original == {"a": {"b": 1}}
+
+    def test_non_mapping_argument_raises(self):
+        with pytest.raises(TypeError):
+            flatten_dict(["a", "b"])
 
 
 class TestInvert:

@@ -15,7 +15,15 @@ from toolbelt.iterables import (
     unique_justseen,
     windowed,
 )
-from toolbelt.mapping import deep_merge, get_path, invert, omit, pick, set_path
+from toolbelt.mapping import (
+    deep_merge,
+    flatten_dict,
+    get_path,
+    invert,
+    omit,
+    pick,
+    set_path,
+)
 from toolbelt.text import (
     camel_case,
     common_prefix,
@@ -40,6 +48,7 @@ __all__ = [
     "deep_merge",
     "first",
     "flatten",
+    "flatten_dict",
     "get_path",
     "group_by",
     "human_bytes",
