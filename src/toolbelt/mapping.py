@@ -9,7 +9,16 @@ K = TypeVar("K")
 
 V = TypeVar("V", bound=Hashable)
 
-__all__ = ["deep_merge", "flatten_dict", "get_path", "invert", "omit", "pick", "set_path"]
+__all__ = [
+    "deep_merge",
+    "flatten_dict",
+    "get_path",
+    "invert",
+    "omit",
+    "pick",
+    "set_path",
+    "unflatten_dict",
+]
 
 
 def deep_merge(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
@@ -178,6 +187,49 @@ def flatten_dict(mapping: Mapping[str, Any], sep: str = ".") -> dict[str, Any]:
                 result[full_key] = value
 
     _walk(mapping, "")
+    return result
+
+
+def unflatten_dict(mapping: Mapping[str, Any], sep: str = ".") -> dict[str, Any]:
+    """Expand a flat mapping of ``sep``-joined keys into a nested dict.
+
+    The inverse of ``flatten_dict``: each key is split on ``sep``, and each
+    segment but the last becomes a nested dict level, with the final segment
+    holding the original value.
+
+        >>> unflatten_dict({"a": 1, "b.c": 2, "b.d.e": 3})
+        {'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}
+        >>> unflatten_dict({"a/b": 1}, sep="/")
+        {'a': {'b': 1}}
+        >>> unflatten_dict({})
+        {}
+
+    Unlike ``set_path``, a collision is never resolved by last-write-wins:
+    it raises ``ValueError`` instead. This covers two different keys
+    expanding to the same path (``{"a.b": 1, "a.b": 2}`` can't happen in a
+    single ``dict``, but ``{"a.b": 1}`` merged with another mapping could
+    produce it) and one key's path running through a segment that another
+    key already claimed as a leaf (``{"a": 1, "a.b": 2}``).
+
+    Raises ``TypeError`` if ``mapping`` is not a ``Mapping``.
+    """
+    if not isinstance(mapping, Mapping):
+        raise TypeError(f"mapping must be a Mapping, got {type(mapping).__name__}")
+
+    result: dict[str, Any] = {}
+    for key, value in mapping.items():
+        *parents, last = str(key).split(sep)
+        current = result
+        for depth, segment in enumerate(parents):
+            existing = current.get(segment, {})
+            is_leaf = segment in current and not isinstance(existing, dict)
+            if is_leaf:
+                path = sep.join(parents[: depth + 1])
+                raise ValueError(f"key collision at {path!r}")
+            current = current.setdefault(segment, existing)
+        if last in current:
+            raise ValueError(f"key collision at {key!r}")
+        current[last] = value
     return result
 
 

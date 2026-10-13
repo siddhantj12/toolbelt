@@ -13,9 +13,6 @@ box in the same pull request that lands the work.
 `toolbelt.iterables`
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
-`toolbelt.mapping`
-- [ ] `unflatten_dict(mapping, sep=".")` — the inverse, raising on key collisions.
-
 `toolbelt.timing`
 - [ ] `human_duration(seconds)` — `"1h 2m 3s"`, with sub-second handling documented.
 - [ ] `parse_duration(text)` — `"1h30m"` to seconds, the inverse of `human_duration`.
@@ -39,5 +36,5 @@ box in the same pull request that lands the work.
 ## Done
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi`, `snake_case`, `camel_case`, `ordinal`, `pluralize`, `human_bytes`, `mask` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen`, `nth`, `peekable` (`toolbelt.iterables`)
-- [x] `deep_merge`, `get_path`, `invert`, `pick`, `omit`, `set_path`, `flatten_dict` (`toolbelt.mapping`)
+- [x] `deep_merge`, `get_path`, `invert`, `pick`, `omit`, `set_path`, `flatten_dict`, `unflatten_dict` (`toolbelt.mapping`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.

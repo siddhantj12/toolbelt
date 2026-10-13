@@ -8,6 +8,7 @@ from toolbelt.mapping import (
     omit,
     pick,
     set_path,
+    unflatten_dict,
 )
 
 
@@ -132,6 +133,30 @@ class TestFlattenDict:
     def test_non_mapping_argument_raises(self):
         with pytest.raises(TypeError):
             flatten_dict(["a", "b"])
+
+
+class TestUnflattenDict:
+    def test_expands_dotted_keys_into_nested_mappings(self):
+        flat = {"a": 1, "b.c": 2, "b.d.e": 3}
+        assert unflatten_dict(flat) == {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
+
+    def test_custom_separator(self):
+        assert unflatten_dict({"a/b": 1}, sep="/") == {"a": {"b": 1}}
+
+    def test_empty_mapping_returns_empty_dict(self):
+        assert unflatten_dict({}) == {}
+
+    def test_is_the_inverse_of_flatten_dict(self):
+        nested = {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
+        assert unflatten_dict(flatten_dict(nested)) == nested
+
+    def test_key_colliding_with_another_keys_path_raises(self):
+        with pytest.raises(ValueError):
+            unflatten_dict({"a": 1, "a.b": 2})
+
+    def test_non_mapping_argument_raises(self):
+        with pytest.raises(TypeError):
+            unflatten_dict(["a", "b"])
 
 
 class TestInvert:

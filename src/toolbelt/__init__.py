@@ -23,6 +23,7 @@ from toolbelt.mapping import (
     omit,
     pick,
     set_path,
+    unflatten_dict,
 )
 from toolbelt.text import (
     camel_case,
@@ -67,6 +68,7 @@ __all__ = [
     "snake_case",
     "strip_ansi",
     "truncate",
+    "unflatten_dict",
     "unique_justseen",
     "windowed",
     "word_wrap",
