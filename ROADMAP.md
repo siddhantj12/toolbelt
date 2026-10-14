@@ -14,7 +14,6 @@ box in the same pull request that lands the work.
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
 `toolbelt.timing`
-- [ ] `human_duration(seconds)` — `"1h 2m 3s"`, with sub-second handling documented.
 - [ ] `parse_duration(text)` — `"1h30m"` to seconds, the inverse of `human_duration`.
 
 `toolbelt.functional` (new module)
@@ -34,6 +33,7 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
+- [x] `human_duration` (`toolbelt.timing`)
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi`, `snake_case`, `camel_case`, `ordinal`, `pluralize`, `human_bytes`, `mask` (`toolbelt.text`)
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen`, `nth`, `peekable` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert`, `pick`, `omit`, `set_path`, `flatten_dict`, `unflatten_dict` (`toolbelt.mapping`)
