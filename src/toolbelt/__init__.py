@@ -38,6 +38,7 @@ from toolbelt.text import (
     truncate,
     word_wrap,
 )
+from toolbelt.timing import human_duration
 
 __all__ = [
     "batched",
@@ -53,6 +54,7 @@ __all__ = [
     "get_path",
     "group_by",
     "human_bytes",
+    "human_duration",
     "interleave",
     "invert",
     "mask",
