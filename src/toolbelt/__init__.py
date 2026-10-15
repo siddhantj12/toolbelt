@@ -38,7 +38,7 @@ from toolbelt.text import (
     truncate,
     word_wrap,
 )
-from toolbelt.timing import human_duration
+from toolbelt.timing import human_duration, parse_duration
 
 __all__ = [
     "batched",
@@ -61,6 +61,7 @@ __all__ = [
     "nth",
     "omit",
     "ordinal",
+    "parse_duration",
     "partition",
     "peekable",
     "pick",
