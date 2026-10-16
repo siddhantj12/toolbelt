@@ -1,5 +1,6 @@
 """Small, dependency-free Python utilities."""
 
+from toolbelt.functional import once
 from toolbelt.iterables import (
     batched,
     chunk_by,
@@ -60,6 +61,7 @@ __all__ = [
     "mask",
     "nth",
     "omit",
+    "once",
     "ordinal",
     "parse_duration",
     "partition",
