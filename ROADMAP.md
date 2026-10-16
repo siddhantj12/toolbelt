@@ -14,7 +14,6 @@ box in the same pull request that lands the work.
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
 `toolbelt.functional` (new module)
-- [ ] `once(func)` — call at most once, return the cached result after.
 - [ ] `compose(*funcs)` — right-to-left function composition.
 
 `toolbelt.files` (new module)
@@ -30,6 +29,7 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
+- [x] `once` (`toolbelt.functional`)
 - [x] `parse_duration` (`toolbelt.timing`)
 - [x] `human_duration` (`toolbelt.timing`)
 - [x] `slugify`, `truncate`, `word_wrap`, `common_prefix`, `strip_ansi`, `snake_case`, `camel_case`, `ordinal`, `pluralize`, `human_bytes`, `mask` (`toolbelt.text`)
