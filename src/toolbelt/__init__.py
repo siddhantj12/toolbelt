@@ -1,6 +1,6 @@
 """Small, dependency-free Python utilities."""
 
-from toolbelt.functional import once
+from toolbelt.functional import compose, once
 from toolbelt.iterables import (
     batched,
     chunk_by,
@@ -46,6 +46,7 @@ __all__ = [
     "camel_case",
     "chunk_by",
     "common_prefix",
+    "compose",
     "count_by",
     "dedupe",
     "deep_merge",

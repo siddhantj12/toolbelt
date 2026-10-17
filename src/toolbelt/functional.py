@@ -6,9 +6,54 @@ from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["once"]
+__all__ = ["compose", "once"]
 
 _unset = object()
+
+
+def compose(*funcs: Callable[..., Any]) -> Callable[..., Any]:
+    """Combine ``funcs`` into one callable that applies them right-to-left.
+
+    ``compose(f, g, h)(x)`` calls ``h(x)`` first, feeds its return value to
+    ``g``, then feeds that to ``f`` — equivalent to ``f(g(h(x)))``. Only the
+    rightmost function receives the original call's arguments; every other
+    function is called with exactly one argument, the previous function's
+    return value.
+
+        >>> compose(str, lambda x: x + 1)(2)
+        '3'
+        >>> compose(str.upper, str.strip)("  hi  ")
+        'HI'
+
+    Calling ``compose()`` with no arguments returns the identity function,
+    which returns its single argument unchanged:
+
+        >>> compose()(5)
+        5
+
+    Raises ``TypeError`` if any argument is not callable; this is checked
+    eagerly, when ``compose()`` is called, not when the result is.
+    """
+    for func in funcs:
+        if not callable(func):
+            raise TypeError(f"compose() arguments must be callable, got {func!r}")
+
+    if not funcs:
+
+        def identity(value: T) -> T:
+            return value
+
+        return identity
+
+    *rest, innermost = funcs
+
+    def composed(*args: Any, **kwargs: Any) -> Any:
+        result = innermost(*args, **kwargs)
+        for func in reversed(rest):
+            result = func(result)
+        return result
+
+    return composed
 
 
 def once(func: Callable[..., T]) -> Callable[..., T]:
