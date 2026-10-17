@@ -1,6 +1,24 @@
 import pytest
 
-from toolbelt.functional import once
+from toolbelt.functional import compose, once
+
+
+class TestCompose:
+    def test_applies_functions_right_to_left(self):
+        assert compose(str, lambda x: x + 1)(2) == "3"
+        assert compose(str.upper, str.strip)("  hi  ") == "HI"
+
+    def test_passes_through_the_outermost_calls_arguments_to_the_innermost_func(self):
+        assert compose(str, lambda a, b: a + b)(2, 3) == "5"
+
+    def test_no_functions_returns_the_identity_function(self):
+        identity = compose()
+        assert identity(5) == 5
+        assert identity("hi") == "hi"
+
+    def test_raises_type_error_for_a_non_callable_argument(self):
+        with pytest.raises(TypeError, match="must be callable"):
+            compose(str, 1)
 
 
 class TestOnce:
