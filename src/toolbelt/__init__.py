@@ -1,5 +1,6 @@
 """Small, dependency-free Python utilities."""
 
+from toolbelt.files import atomic_write
 from toolbelt.functional import compose, once
 from toolbelt.iterables import (
     batched,
@@ -42,6 +43,7 @@ from toolbelt.text import (
 from toolbelt.timing import human_duration, parse_duration
 
 __all__ = [
+    "atomic_write",
     "batched",
     "camel_case",
     "chunk_by",

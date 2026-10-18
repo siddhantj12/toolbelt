@@ -14,7 +14,6 @@ box in the same pull request that lands the work.
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
 `toolbelt.files` (new module)
-- [ ] `atomic_write(path, text)` — write via a temp file in the same directory and `os.replace`.
 - [ ] `read_lines(path, *, strip=True, skip_blank=True)` — lines of a text file as a list.
 
 ### `toolbelt.timing` (new module)
@@ -26,6 +25,7 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
+- [x] `atomic_write` (`toolbelt.files`)
 - [x] `compose` (`toolbelt.functional`)
 - [x] `once` (`toolbelt.functional`)
 - [x] `parse_duration` (`toolbelt.timing`)
