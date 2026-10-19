@@ -1,6 +1,6 @@
 import pytest
 
-from toolbelt.files import atomic_write
+from toolbelt.files import atomic_write, read_lines
 
 
 class TestAtomicWrite:
@@ -32,3 +32,48 @@ class TestAtomicWrite:
     def test_missing_parent_directory_raises(self, tmp_path):
         with pytest.raises(FileNotFoundError):
             atomic_write(tmp_path / "missing" / "config.txt", "hello")
+
+
+class TestReadLines:
+    def test_strips_and_skips_blanks_by_default(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("  first  \n\n   \n  second\n")
+        assert read_lines(target) == ["first", "second"]
+
+    def test_strip_false_keeps_original_spacing(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("  first  \nsecond\n")
+        assert read_lines(target, strip=False) == ["  first  ", "second"]
+
+    def test_skip_blank_false_keeps_blank_lines(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("first\n\nsecond\n")
+        assert read_lines(target, skip_blank=False) == ["first", "", "second"]
+
+    def test_strip_false_and_skip_blank_false_keeps_everything(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("  first  \n\n  second\n")
+        assert read_lines(target, strip=False, skip_blank=False) == [
+            "  first  ",
+            "",
+            "  second",
+        ]
+
+    def test_whitespace_only_line_is_dropped_even_without_strip(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("first\n   \nsecond\n")
+        assert read_lines(target, strip=False) == ["first", "second"]
+
+    def test_empty_file_returns_empty_list(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("")
+        assert read_lines(target) == []
+
+    def test_accepts_a_str_path(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("first\nsecond\n")
+        assert read_lines(str(target)) == ["first", "second"]
+
+    def test_missing_file_raises(self, tmp_path):
+        with pytest.raises(FileNotFoundError):
+            read_lines(tmp_path / "missing.txt")

@@ -1,6 +1,6 @@
 """Small, dependency-free Python utilities."""
 
-from toolbelt.files import atomic_write
+from toolbelt.files import atomic_write, read_lines
 from toolbelt.functional import compose, once
 from toolbelt.iterables import (
     batched,
@@ -71,6 +71,7 @@ __all__ = [
     "peekable",
     "pick",
     "pluralize",
+    "read_lines",
     "set_path",
     "slugify",
     "snake_case",
