@@ -13,9 +13,6 @@ box in the same pull request that lands the work.
 `toolbelt.iterables`
 - [ ] `split_at(iterable, predicate)` — split into lists at items matching `predicate`, dropping them.
 
-`toolbelt.files` (new module)
-- [ ] `read_lines(path, *, strip=True, skip_blank=True)` — lines of a text file as a list.
-
 ### `toolbelt.timing` (new module)
 - [ ] `Timer` context manager — wall-clock elapsed time with a readable `repr`.
 - [ ] `retry(attempts, backoff)` — decorator with exponential backoff.
@@ -25,6 +22,7 @@ box in the same pull request that lands the work.
 - [ ] Property-based tests for `slugify` idempotence via Hypothesis.
 
 ## Done
+- [x] `read_lines` (`toolbelt.files`)
 - [x] `atomic_write` (`toolbelt.files`)
 - [x] `compose` (`toolbelt.functional`)
 - [x] `once` (`toolbelt.functional`)

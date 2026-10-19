@@ -7,7 +7,7 @@ import os
 import tempfile
 from pathlib import Path
 
-__all__ = ["atomic_write"]
+__all__ = ["atomic_write", "read_lines"]
 
 
 def atomic_write(path: str | os.PathLike[str], text: str, *, encoding: str = "utf-8") -> None:
@@ -40,3 +40,41 @@ def atomic_write(path: str | os.PathLike[str], text: str, *, encoding: str = "ut
         with contextlib.suppress(FileNotFoundError):
             os.unlink(tmp_path)
         raise
+
+
+def read_lines(
+    path: str | os.PathLike[str],
+    *,
+    strip: bool = True,
+    skip_blank: bool = True,
+    encoding: str = "utf-8",
+) -> list[str]:
+    """Return the lines of the text file at ``path`` as a list of strings.
+
+    The file is read in one pass and split on universal newlines, so no
+    line in the result ever includes its trailing newline. ``strip``
+    (default ``True``) removes each line's leading and trailing whitespace;
+    set it to ``False`` to keep a line's own leading/trailing spaces exactly
+    as written. ``skip_blank`` (default ``True``) drops lines that are empty
+    or whitespace-only — that check looks at the line's stripped text
+    regardless of ``strip``, so a line of only spaces is dropped even when
+    ``strip=False`` keeps every other line's spacing intact.
+
+        >>> from pathlib import Path
+        >>> import tempfile
+        >>> target = Path(tempfile.mkdtemp()) / "notes.txt"
+        >>> _ = target.write_text("  first  \\n\\n  second\\n")
+        >>> read_lines(target)
+        ['first', 'second']
+        >>> read_lines(target, strip=False, skip_blank=False)
+        ['  first  ', '', '  second']
+
+    An empty file returns ``[]``. Raises ``FileNotFoundError`` if ``path``
+    does not exist.
+    """
+    lines = Path(path).read_text(encoding=encoding).splitlines()
+    if strip:
+        lines = [line.strip() for line in lines]
+    if skip_blank:
+        lines = [line for line in lines if line.strip()]
+    return lines
