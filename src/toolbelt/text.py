@@ -55,16 +55,20 @@ def slugify(value: str, *, separator: str = "-") -> str:
     characters collapse into a single ``separator``, and leading and trailing
     separators are stripped. The strip removes the exact ``separator`` text,
     not any of its individual characters, so a multi-character separator never
-    eats into real content that happens to share a letter with it.
+    eats into real content that happens to share a letter with it. ``separator``
+    is inserted literally, even when it contains a backslash — it is never
+    interpreted as a regex backreference.
 
         >>> slugify("Crème Brûlée, please!")
         'creme-brulee-please'
         >>> slugify("banana!!!", separator="an")
         'banana'
+        >>> slugify("a b", separator="\\\\")
+        'a\\\\b'
     """
     folded = unicodedata.normalize("NFKD", value)
     ascii_only = folded.encode("ascii", "ignore").decode("ascii")
-    collapsed = _NON_ALNUM.sub(separator, ascii_only.lower())
+    collapsed = _NON_ALNUM.sub(lambda _: separator, ascii_only.lower())
     # Runs collapse to one separator, so at most one sits at each end.
     return collapsed.removeprefix(separator).removesuffix(separator)
 
