@@ -67,6 +67,15 @@ class TestSlugify:
     def test_empty_separator_collapses_without_stripping(self):
         assert slugify("hi!!", separator="") == "hi"
 
+    def test_backslash_separator_is_inserted_literally(self):
+        # Regression: passing `separator` straight to re.sub()'s repl
+        # argument used to make a backslash trigger regex backreference
+        # parsing instead of being inserted as a literal character.
+        assert slugify("a b", separator="\\") == "a\\b"
+
+    def test_separator_resembling_a_backreference_is_not_special(self):
+        assert slugify("hello world foo", separator="\\1") == "hello\\1world\\1foo"
+
 
 class TestTruncate:
     def test_short_string_is_unchanged(self):
