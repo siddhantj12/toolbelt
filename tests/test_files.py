@@ -1,3 +1,6 @@
+import os
+import stat
+
 import pytest
 
 from toolbelt.files import atomic_write, read_lines
@@ -32,6 +35,18 @@ class TestAtomicWrite:
     def test_missing_parent_directory_raises(self, tmp_path):
         with pytest.raises(FileNotFoundError):
             atomic_write(tmp_path / "missing" / "config.txt", "hello")
+
+    def test_overwrite_preserves_existing_permissions(self, tmp_path):
+        target = tmp_path / "config.txt"
+        target.write_text("old")
+        os.chmod(target, 0o644)
+        atomic_write(target, "new")
+        assert stat.S_IMODE(target.stat().st_mode) == 0o644
+
+    def test_new_file_keeps_default_restrictive_permissions(self, tmp_path):
+        target = tmp_path / "config.txt"
+        atomic_write(target, "hello")
+        assert stat.S_IMODE(target.stat().st_mode) == 0o600
 
 
 class TestReadLines:
