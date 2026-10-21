@@ -26,15 +26,26 @@ def atomic_write(path: str | os.PathLike[str], text: str, *, encoding: str = "ut
         >>> target.read_text()
         'hello'
 
+    If ``path`` already exists, its permission bits are carried over to the
+    replacement file, so overwriting a world-readable config file doesn't
+    silently leave it readable only by its owner. A newly created file gets
+    the temporary file's own restrictive permissions, same as before.
+
     ``text`` may be ``""``, which (over)writes ``path`` with an empty file.
     Raises ``FileNotFoundError`` if ``path``'s parent directory does not
     exist, since there is nowhere to create the temporary file.
     """
     target = Path(path)
+    try:
+        mode = target.stat().st_mode & 0o777
+    except FileNotFoundError:
+        mode = None
     fd, tmp_path = tempfile.mkstemp(dir=target.parent, prefix=f".{target.name}.")
     try:
         with os.fdopen(fd, "w", encoding=encoding) as tmp_file:
             tmp_file.write(text)
+        if mode is not None:
+            os.chmod(tmp_path, mode)
         os.replace(tmp_path, target)
     except BaseException:
         with contextlib.suppress(FileNotFoundError):
