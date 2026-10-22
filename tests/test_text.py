@@ -322,6 +322,16 @@ class TestHumanBytes:
     def test_large_value_climbs_multiple_units(self):
         assert human_bytes(1024**3) == "1.0 GiB"
 
+    def test_rounding_up_to_the_base_bumps_to_the_next_unit(self):
+        # Regression: 1048575 / 1024 == 1023.9990234375, which rounds to
+        # "1024.0" at one decimal place — that must escalate to MiB rather
+        # than display a value equal to the base.
+        assert human_bytes(1024**2 - 1) == "1.0 MiB"
+        assert human_bytes(1024**3 - 1) == "1.0 GiB"
+
+    def test_rounding_up_to_the_base_bumps_to_the_next_unit_decimal(self):
+        assert human_bytes(1000**2 - 1, binary=False) == "1.0 MB"
+
     def test_negative_raises_value_error(self):
         with pytest.raises(ValueError):
             human_bytes(-1)

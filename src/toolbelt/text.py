@@ -255,7 +255,11 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
     set it to ``False`` to scale by 1000 and use ``KB``/``MB``/... instead.
     The value is divided down until it fits under the base, then shown with
     one decimal place; values under the base are shown as a bare integer
-    byte count with no decimal.
+    byte count with no decimal. Rounding to one decimal place never displays
+    a value that has reached the base itself (e.g. ``"1024.0 KiB"``) — a
+    value that rounds up that far is bumped to the next unit instead, so
+    ``1048575`` (one byte short of a full mebibyte) reads as ``"1.0 MiB"``,
+    not ``"1024.0 KiB"``.
 
         >>> human_bytes(1536)
         '1.5 KiB'
@@ -263,6 +267,8 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
         '1.6 MB'
         >>> human_bytes(0)
         '0 B'
+        >>> human_bytes(1024**2 - 1)
+        '1.0 MiB'
 
     Raises ``TypeError`` if ``n`` is not an ``int`` or ``float``, and
     ``ValueError`` if it is negative.
@@ -283,6 +289,11 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
 
     if unit_index == 0:
         return f"{int(value)} {units[0]}"
+
+    if round(value, 1) >= base and unit_index < len(units) - 1:
+        value /= base
+        unit_index += 1
+
     return f"{value:.1f} {units[unit_index]}"
 
 
