@@ -132,6 +132,12 @@ class TestWordWrap:
     def test_whitespace_only_input_returns_empty_string(self):
         assert word_wrap("   \n\n  ", 10) == ""
 
+    def test_hyphenated_word_is_not_split_at_the_hyphen(self):
+        assert word_wrap("a well-known fact", 8) == "a\nwell-known\nfact"
+
+    def test_hyphenated_word_shorter_than_width_stays_on_one_line(self):
+        assert word_wrap("one two three-four five", 10) == "one two\nthree-four\nfive"
+
     def test_width_below_one_raises(self):
         with pytest.raises(ValueError):
             word_wrap("hello", 0)

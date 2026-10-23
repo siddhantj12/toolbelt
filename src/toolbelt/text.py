@@ -114,12 +114,15 @@ def word_wrap(text: str, width: int) -> str:
     between them. Within a paragraph, existing single line breaks and other
     runs of whitespace are collapsed before wrapping, so already-wrapped
     input is treated as one paragraph and re-flowed. A single word longer
-    than ``width`` is kept whole on its own line rather than being broken.
+    than ``width`` is kept whole on its own line rather than being broken —
+    including a hyphenated word, which is not split at the hyphen either:
 
         >>> word_wrap("one two three four", 10)
         'one two\\nthree four'
         >>> word_wrap("first para\\n\\nsecond para", 20)
         'first para\\n\\nsecond para'
+        >>> word_wrap("a well-known fact", 8)
+        'a\\nwell-known\\nfact'
 
     Raises ``ValueError`` if ``width`` is less than 1. Empty or
     whitespace-only input returns ``""``.
@@ -129,7 +132,12 @@ def word_wrap(text: str, width: int) -> str:
 
     paragraphs = _PARAGRAPH_BREAK.split(text.strip())
     wrapped = [
-        textwrap.fill(" ".join(paragraph.split()), width=width, break_long_words=False)
+        textwrap.fill(
+            " ".join(paragraph.split()),
+            width=width,
+            break_long_words=False,
+            break_on_hyphens=False,
+        )
         for paragraph in paragraphs
         if paragraph.strip()
     ]
