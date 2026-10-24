@@ -208,9 +208,10 @@ def ordinal(n: int) -> str:
         >>> ordinal(-2)
         '-2nd'
 
-    ``0`` returns ``"0th"``. Raises ``TypeError`` if ``n`` is not an ``int``.
+    ``0`` returns ``"0th"``. Raises ``TypeError`` if ``n`` is not an ``int``
+    (``bool`` included — ``True``/``False`` are not meaningful ordinals).
     """
-    if not isinstance(n, int):
+    if isinstance(n, bool) or not isinstance(n, int):
         raise TypeError(f"n must be an int, got {type(n).__name__}")
 
     last_two = abs(n) % 100
@@ -353,9 +354,10 @@ def pluralize(count: int, singular: str, plural: str | None = None) -> str:
         >>> pluralize(2, "child", "children")
         '2 children'
 
-    Raises ``TypeError`` if ``count`` is not an ``int``.
+    Raises ``TypeError`` if ``count`` is not an ``int`` (``bool`` included —
+    ``True``/``False`` are not meaningful counts).
     """
-    if not isinstance(count, int):
+    if isinstance(count, bool) or not isinstance(count, int):
         raise TypeError(f"count must be an int, got {type(count).__name__}")
 
     if abs(count) == 1:
