@@ -225,6 +225,10 @@ class TestOrdinal:
         with pytest.raises(TypeError):
             ordinal("1")
 
+    def test_bool_raises_type_error(self):
+        with pytest.raises(TypeError):
+            ordinal(True)
+
 
 class TestCamelCase:
     def test_converts_snake_case(self):
@@ -280,6 +284,10 @@ class TestPluralize:
     def test_non_int_count_raises_type_error(self):
         with pytest.raises(TypeError):
             pluralize("1", "file")
+
+    def test_bool_count_raises_type_error(self):
+        with pytest.raises(TypeError):
+            pluralize(True, "file")
 
 
 class TestMask:
