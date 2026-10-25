@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import deque
-from collections.abc import Hashable, Iterable, Iterator
+from collections.abc import Hashable, Iterable, Iterator, Mapping
 from itertools import islice
 from typing import Any, Callable, Generic, TypeVar
 
@@ -176,10 +176,13 @@ def nth(iterable: Iterable[T], n: int, default: T | None = None) -> T | None:
 def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
     """Yield the leaf items of ``nested``, descending up to ``depth`` levels.
 
-    An item is descended into only if it is iterable and not a ``str`` or
-    ``bytes`` — those are always yielded whole, never split into characters.
-    Anything else that isn't iterable is also yielded as-is. Raises
-    ``ValueError`` if ``depth`` is negative.
+    An item is descended into only if it is iterable and not a ``str``,
+    ``bytes`` or ``Mapping`` — those are always yielded whole, never taken
+    apart. A ``dict`` is excluded along with ``str``/``bytes`` because
+    iterating one yields only its keys, silently dropping the values; without
+    this, a dict nested in ``nested`` would flatten into its keys and lose
+    its values entirely. Anything else that isn't iterable is also yielded
+    as-is. Raises ``ValueError`` if ``depth`` is negative.
 
         >>> list(flatten([1, [2, 3], [4, [5, 6]]]))
         [1, 2, 3, 4, [5, 6]]
@@ -187,12 +190,18 @@ def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
         [1, 2, 3, 4]
         >>> list(flatten(["ab", ["cd", "ef"]]))
         ['ab', 'cd', 'ef']
+        >>> list(flatten([1, {"a": 2}, [3]]))
+        [1, {'a': 2}, 3]
     """
     if depth < 0:
         raise ValueError(f"depth must be at least 0, got {depth}")
 
     for item in nested:
-        if depth > 0 and isinstance(item, Iterable) and not isinstance(item, (str, bytes)):
+        if (
+            depth > 0
+            and isinstance(item, Iterable)
+            and not isinstance(item, (str, bytes, Mapping))
+        ):
             yield from flatten(item, depth - 1)
         else:
             yield item
