@@ -247,6 +247,14 @@ class TestFlatten:
     def test_strings_are_treated_as_atoms(self):
         assert list(flatten(["ab", ["cd", "ef"]])) == ["ab", "cd", "ef"]
 
+    def test_dicts_are_treated_as_atoms(self):
+        nested = [1, {"a": 2, "b": 3}, [4]]
+        assert list(flatten(nested)) == [1, {"a": 2, "b": 3}, 4]
+
+    def test_dicts_are_not_descended_into_at_any_depth(self):
+        nested = [{"a": 2}]
+        assert list(flatten(nested, depth=5)) == [{"a": 2}]
+
     def test_empty_input_yields_nothing(self):
         assert list(flatten([])) == []
 
