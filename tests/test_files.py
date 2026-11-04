@@ -92,3 +92,18 @@ class TestReadLines:
     def test_missing_file_raises(self, tmp_path):
         with pytest.raises(FileNotFoundError):
             read_lines(tmp_path / "missing.txt")
+
+    def test_form_feed_is_kept_as_part_of_the_line_not_treated_as_a_break(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("abc\x0cdef\n", encoding="utf-8")
+        assert read_lines(target, strip=False, skip_blank=False) == ["abc\x0cdef"]
+
+    def test_unicode_line_separator_is_kept_as_part_of_the_line(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_text("first second\n", encoding="utf-8")
+        assert read_lines(target, strip=False, skip_blank=False) == ["first second"]
+
+    def test_crlf_and_lone_cr_are_both_treated_as_line_endings(self, tmp_path):
+        target = tmp_path / "notes.txt"
+        target.write_bytes(b"first\r\nsecond\rthird\n")
+        assert read_lines(target) == ["first", "second", "third"]
