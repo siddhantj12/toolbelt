@@ -62,9 +62,20 @@ def read_lines(
 ) -> list[str]:
     """Return the lines of the text file at ``path`` as a list of strings.
 
-    The file is read in one pass and split on universal newlines, so no
-    line in the result ever includes its trailing newline. ``strip``
-    (default ``True``) removes each line's leading and trailing whitespace;
+    The file is read in one pass and split only on actual line endings —
+    ``\\n``, ``\\r\\n`` and lone ``\\r`` — so no line in the result ever
+    includes its trailing newline. A form feed, vertical tab, or other
+    Unicode line-boundary character embedded in a line is kept as part of
+    that line's text rather than treated as a break, unlike ``str.splitlines()``:
+
+        >>> from pathlib import Path
+        >>> import tempfile
+        >>> target = Path(tempfile.mkdtemp()) / "page.txt"
+        >>> _ = target.write_text("a\\x0cb\\n")
+        >>> read_lines(target, strip=False, skip_blank=False)
+        ['a\\x0cb']
+
+    ``strip`` (default ``True``) removes each line's leading and trailing whitespace;
     set it to ``False`` to keep a line's own leading/trailing spaces exactly
     as written. ``skip_blank`` (default ``True``) drops lines that are empty
     or whitespace-only — that check looks at the line's stripped text
@@ -83,7 +94,10 @@ def read_lines(
     An empty file returns ``[]``. Raises ``FileNotFoundError`` if ``path``
     does not exist.
     """
-    lines = Path(path).read_text(encoding=encoding).splitlines()
+    text = Path(path).read_text(encoding=encoding)
+    lines = text.split("\n")
+    if lines and lines[-1] == "":
+        lines.pop()
     if strip:
         lines = [line.strip() for line in lines]
     if skip_blank:
