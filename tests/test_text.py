@@ -64,6 +64,21 @@ class TestSlugify:
     def test_multi_char_separator_keeps_content_ending_in_separator(self):
         assert slugify("Japan!", separator="an") == "japan"
 
+    def test_separator_matching_content_with_nothing_to_strip_is_untouched(self):
+        # Regression: there is no punctuation here at all, so nothing is
+        # inserted — removeprefix()/removesuffix() on the separator text
+        # used to strip "an" off the end anyway, just because it happened
+        # to match, turning "japan" into "jap".
+        assert slugify("japan", separator="an") == "japan"
+
+    def test_separator_matching_leading_content_is_untouched(self):
+        assert slugify("anbanana", separator="an") == "anbanana"
+
+    def test_separator_only_stripped_where_actually_inserted(self):
+        # "ab" at the start is real content; the separator is inserted only
+        # for the space, in the middle.
+        assert slugify("ab test", separator="ab") == "ababtest"
+
     def test_empty_separator_collapses_without_stripping(self):
         assert slugify("hi!!", separator="") == "hi"
 
