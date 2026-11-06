@@ -48,29 +48,41 @@ _CASE_BOUNDARY = re.compile(r"([a-z0-9])([A-Z])")
 _WORD_SEPARATORS = re.compile(r"[\s_-]+")
 
 
+_SEPARATOR_PLACEHOLDER = "\0"
+
+
 def slugify(value: str, *, separator: str = "-") -> str:
     """Return a lowercase, URL-safe slug built from ``value``.
 
     Accents are folded to their ASCII base characters, runs of non-alphanumeric
-    characters collapse into a single ``separator``, and leading and trailing
-    separators are stripped. The strip removes the exact ``separator`` text,
-    not any of its individual characters, so a multi-character separator never
-    eats into real content that happens to share a letter with it. ``separator``
-    is inserted literally, even when it contains a backslash — it is never
-    interpreted as a regex backreference.
+    characters collapse into a single ``separator``, and a separator that ends
+    up at either end is stripped. Only a separator actually inserted this way
+    is ever stripped — real leading or trailing content that merely happens to
+    read the same as ``separator`` is left alone, even when ``value`` has no
+    non-alphanumeric characters at all:
 
         >>> slugify("Crème Brûlée, please!")
         'creme-brulee-please'
         >>> slugify("banana!!!", separator="an")
         'banana'
+        >>> slugify("japan", separator="an")
+        'japan'
+
+    ``separator`` is inserted literally, even when it contains a backslash —
+    it is never interpreted as a regex backreference.
+
         >>> slugify("a b", separator="\\\\")
         'a\\\\b'
     """
     folded = unicodedata.normalize("NFKD", value)
     ascii_only = folded.encode("ascii", "ignore").decode("ascii")
-    collapsed = _NON_ALNUM.sub(lambda _: separator, ascii_only.lower())
-    # Runs collapse to one separator, so at most one sits at each end.
-    return collapsed.removeprefix(separator).removesuffix(separator)
+    # Collapse onto a placeholder first, strip stray leading/trailing ones,
+    # then substitute the real separator — so stripping only ever removes a
+    # separator that was actually inserted, never genuine content that
+    # happens to read the same as it.
+    collapsed = _NON_ALNUM.sub(_SEPARATOR_PLACEHOLDER, ascii_only.lower())
+    collapsed = collapsed.strip(_SEPARATOR_PLACEHOLDER)
+    return collapsed.replace(_SEPARATOR_PLACEHOLDER, separator)
 
 
 def truncate(value: str, limit: int, *, suffix: str = "…") -> str:
