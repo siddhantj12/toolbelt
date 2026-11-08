@@ -264,6 +264,12 @@ class TestCamelCase:
     def test_single_word_is_lowercased(self):
         assert camel_case("Hello") == "hello"
 
+    def test_capitalizes_first_letter_of_digit_led_word(self):
+        assert camel_case("item_2fast") == "item2Fast"
+
+    def test_digit_only_word_is_left_unchanged(self):
+        assert camel_case("convert_2_json") == "convert2Json"
+
     def test_empty_input_returns_empty_string(self):
         assert camel_case("") == ""
 
