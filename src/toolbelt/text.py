@@ -250,6 +250,14 @@ def camel_case(text: str) -> str:
         >>> camel_case("parse_HTTP_response")
         'parseHTTPResponse'
 
+    A later word that starts with a digit (or any other non-letter) is still
+    capitalized — the first *letter* in the word is uppercased, not
+    necessarily its first character, since there's no capital form of a
+    digit to rely on instead:
+
+        >>> camel_case("item_2fast")
+        'item2Fast'
+
     ``""`` returns ``""``. Raises ``TypeError`` if ``text`` is not a ``str``.
     """
     if not isinstance(text, str):
@@ -260,7 +268,12 @@ def camel_case(text: str) -> str:
         return ""
 
     def cased(word: str) -> str:
-        return word if word.isupper() and len(word) > 1 else word.capitalize()
+        if word.isupper() and len(word) > 1:
+            return word
+        for i, char in enumerate(word):
+            if char.isalpha():
+                return word[:i] + char.upper() + word[i + 1 :].lower()
+        return word
 
     return words[0].lower() + "".join(cased(word) for word in words[1:])
 
