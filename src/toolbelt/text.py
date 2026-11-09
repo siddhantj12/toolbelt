@@ -41,7 +41,13 @@ def common_prefix(strings: Iterable[str]) -> str:
     return first[:prefix_len]
 
 
-_ANSI_ESCAPE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+_ANSI_ESCAPE = re.compile(
+    r"\x1b(?:"
+    r"\][^\x1b\x07]*(?:\x07|\x1b\\)"  # OSC: title/hyperlink, terminated by BEL or ST
+    r"|\[[0-?]*[ -/]*[@-~]"  # CSI: colors, cursor movement, etc.
+    r"|[@-Z\\-_]"  # other two-byte Fe sequences
+    r")"
+)
 
 _ACRONYM_BOUNDARY = re.compile(r"([A-Z]+)([A-Z][a-z])")
 _CASE_BOUNDARY = re.compile(r"([a-z0-9])([A-Z])")
@@ -165,6 +171,17 @@ def strip_ansi(text: str) -> str:
 
         >>> strip_ansi("\\x1b[31mError:\\x1b[0m disk full")
         'Error: disk full'
+
+    An OSC sequence (used for a terminal window title or a clickable
+    hyperlink) is a variable-length run bracketed by ``ESC ]`` and a
+    terminator, rather than a single character — its whole payload is
+    removed too, not just the ``ESC ]`` that starts it:
+
+        >>> strip_ansi("\\x1b]8;;https://example.com\\x1b\\\\link\\x1b]8;;\\x1b\\\\")
+        'link'
+
+    A truncated OSC sequence with no terminator leaves its payload text
+    behind, since there is no way to tell where it was meant to end.
 
     Raises ``TypeError`` if ``text`` is not a ``str``.
     """
