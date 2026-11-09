@@ -176,6 +176,16 @@ class TestStripAnsi:
         with pytest.raises(TypeError):
             strip_ansi(123)
 
+    def test_removes_osc_window_title_sequence(self):
+        assert strip_ansi("\x1b]0;window title\x07visible text") == "visible text"
+
+    def test_removes_osc_hyperlink_terminated_by_st(self):
+        link = "\x1b]8;;https://example.com\x1b\\link\x1b]8;;\x1b\\"
+        assert strip_ansi(link) == "link"
+
+    def test_unterminated_osc_sequence_leaves_payload(self):
+        assert strip_ansi("\x1b]2;no terminator") == "2;no terminator"
+
 
 class TestSnakeCase:
     def test_converts_camel_case(self):
