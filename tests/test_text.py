@@ -388,3 +388,11 @@ class TestHumanBytes:
     def test_bool_raises_type_error(self):
         with pytest.raises(TypeError):
             human_bytes(True)
+
+    def test_nan_raises_value_error(self):
+        with pytest.raises(ValueError):
+            human_bytes(float("nan"))
+
+    def test_infinity_raises_value_error(self):
+        with pytest.raises(ValueError):
+            human_bytes(float("inf"))
