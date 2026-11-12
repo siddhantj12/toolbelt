@@ -310,7 +310,10 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
     a value that has reached the base itself (e.g. ``"1024.0 KiB"``) — a
     value that rounds up that far is bumped to the next unit instead, so
     ``1048575`` (one byte short of a full mebibyte) reads as ``"1.0 MiB"``,
-    not ``"1024.0 KiB"``.
+    not ``"1024.0 KiB"``. That bump has nowhere to go once ``n`` is large
+    enough to reach the largest unit (``YiB``/``YB``) — there is no unit
+    beyond it to escalate to — so there, and only there, a value that
+    reaches the base is still shown as computed:
 
         >>> human_bytes(1536)
         '1.5 KiB'
@@ -320,6 +323,8 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
         '0 B'
         >>> human_bytes(1024**2 - 1)
         '1.0 MiB'
+        >>> human_bytes(1024**9)
+        '1024.0 YiB'
 
     Raises ``TypeError`` if ``n`` is not an ``int`` or ``float``, and
     ``ValueError`` if it is negative.
