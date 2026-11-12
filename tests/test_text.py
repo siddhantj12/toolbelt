@@ -377,6 +377,12 @@ class TestHumanBytes:
     def test_rounding_up_to_the_base_bumps_to_the_next_unit_decimal(self):
         assert human_bytes(1000**2 - 1, binary=False) == "1.0 MB"
 
+    def test_largest_unit_has_no_next_unit_to_bump_to(self):
+        # Unlike every other unit, YiB/YB has nothing further to escalate
+        # to, so a value that reaches the base is shown as-is there.
+        assert human_bytes(1024**9) == "1024.0 YiB"
+        assert human_bytes(1000**9, binary=False) == "1000.0 YB"
+
     def test_negative_raises_value_error(self):
         with pytest.raises(ValueError):
             human_bytes(-1)
