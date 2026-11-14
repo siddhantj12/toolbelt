@@ -38,6 +38,14 @@ class TestHumanDuration:
         with pytest.raises(TypeError):
             human_duration(True)
 
+    def test_rejects_nan(self):
+        with pytest.raises(ValueError):
+            human_duration(float("nan"))
+
+    def test_rejects_infinity(self):
+        with pytest.raises(ValueError):
+            human_duration(float("inf"))
+
 
 class TestParseDuration:
     def test_combines_hours_minutes_and_seconds(self):
