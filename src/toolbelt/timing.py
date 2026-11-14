@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 
 __all__ = ["human_duration", "parse_duration"]
@@ -35,12 +36,15 @@ def human_duration(seconds: float) -> str:
     ``1.5`` -> ``"2s"``).
 
     Raises ``TypeError`` if ``seconds`` is not an ``int`` or ``float``, and
-    ``ValueError`` if it is negative.
+    ``ValueError`` if it is negative or not finite — ``nan`` and ``inf`` are
+    not meaningful durations.
     """
     if isinstance(seconds, bool) or not isinstance(seconds, (int, float)):
         raise TypeError(f"seconds must be an int or float, got {type(seconds).__name__}")
     if seconds < 0:
         raise ValueError(f"seconds must not be negative, got {seconds}")
+    if not math.isfinite(seconds):
+        raise ValueError(f"seconds must be finite, got {seconds}")
 
     remaining = round(seconds)
     parts = []
