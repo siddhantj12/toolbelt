@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 import textwrap
 import unicodedata
@@ -322,12 +323,15 @@ def human_bytes(n: float, *, binary: bool = True) -> str:
         '1.0 MiB'
 
     Raises ``TypeError`` if ``n`` is not an ``int`` or ``float``, and
-    ``ValueError`` if it is negative.
+    ``ValueError`` if it is negative or not finite — ``nan`` and ``inf``
+    are not meaningful byte counts.
     """
     if isinstance(n, bool) or not isinstance(n, (int, float)):
         raise TypeError(f"n must be an int or float, got {type(n).__name__}")
     if n < 0:
         raise ValueError(f"n must not be negative, got {n}")
+    if not math.isfinite(n):
+        raise ValueError(f"n must be finite, got {n}")
 
     base = 1024 if binary else 1000
     units = _BINARY_UNITS if binary else _DECIMAL_UNITS
