@@ -21,6 +21,13 @@ __all__ = [
 ]
 
 
+def _copy_nested_dicts(value: Any) -> Any:
+    """Copy ``value``, recursing into nested dicts; anything else is kept as-is."""
+    if isinstance(value, dict):
+        return {key: _copy_nested_dicts(v) for key, v in value.items()}
+    return value
+
+
 def deep_merge(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
     """Recursively merge two dicts into a new one, ``b`` winning conflicts.
 
@@ -29,23 +36,31 @@ def deep_merge(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
     recursively; for any other kind of conflict — including a dict on one
     side and a non-dict on the other — the value from ``b`` replaces the
     value from ``a`` outright, it is not merged into it. Neither input is
-    mutated.
+    mutated, and no dict in the result is shared with either input — every
+    nested dict is a fresh copy, including one carried over untouched from a
+    key that only ``a`` or only ``b`` had — so mutating a nested dict found
+    in the result afterward never mutates ``a`` or ``b``:
 
-        >>> deep_merge({"a": 1, "opts": {"x": 1, "y": 2}}, {"opts": {"y": 3, "z": 4}})
+        >>> a = {"a": 1, "opts": {"x": 1, "y": 2}}
+        >>> merged = deep_merge(a, {"opts": {"y": 3, "z": 4}})
+        >>> merged
         {'a': 1, 'opts': {'x': 1, 'y': 3, 'z': 4}}
+        >>> merged["opts"]["x"] = 99
+        >>> a["opts"]["x"]
+        1
 
     Raises ``TypeError`` if either argument is not a ``dict``.
     """
     if not isinstance(a, dict) or not isinstance(b, dict):
         raise TypeError("deep_merge() requires two dicts")
 
-    merged = dict(a)
+    merged = {key: _copy_nested_dicts(value) for key, value in a.items()}
     for key, b_value in b.items():
         a_value = merged.get(key)
         if isinstance(a_value, dict) and isinstance(b_value, dict):
             merged[key] = deep_merge(a_value, b_value)
         else:
-            merged[key] = b_value
+            merged[key] = _copy_nested_dicts(b_value)
     return merged
 
 
