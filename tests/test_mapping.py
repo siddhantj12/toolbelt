@@ -37,6 +37,26 @@ class TestDeepMerge:
         with pytest.raises(TypeError):
             deep_merge({"a": 1}, None)
 
+    def test_mutating_result_does_not_affect_a_key_only_a_had(self):
+        a = {"untouched": {"z": 1}}
+        merged = deep_merge(a, {})
+        merged["untouched"]["z"] = 999
+        assert a == {"untouched": {"z": 1}}
+
+    def test_mutating_result_does_not_affect_a_key_only_b_had(self):
+        b = {"untouched": {"z": 1}}
+        merged = deep_merge({}, b)
+        merged["untouched"]["z"] = 999
+        assert b == {"untouched": {"z": 1}}
+
+    def test_mutating_a_recursively_merged_nested_dict_does_not_affect_inputs(self):
+        a = {"opts": {"x": 1, "y": 2}}
+        b = {"opts": {"y": 3, "z": 4}}
+        merged = deep_merge(a, b)
+        merged["opts"]["x"] = 999
+        assert a == {"opts": {"x": 1, "y": 2}}
+        assert b == {"opts": {"y": 3, "z": 4}}
+
 
 class TestGetPath:
     def test_looks_up_nested_value(self):
