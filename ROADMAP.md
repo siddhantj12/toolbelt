@@ -32,3 +32,5 @@ box in the same pull request that lands the work.
 - [x] `batched`, `dedupe`, `chunk_by`, `windowed`, `partition`, `first`, `flatten`, `group_by`, `count_by`, `interleave`, `unique_justseen`, `nth`, `peekable` (`toolbelt.iterables`)
 - [x] `deep_merge`, `get_path`, `invert`, `pick`, `omit`, `set_path`, `flatten_dict`, `unflatten_dict` (`toolbelt.mapping`)
 - [x] Add `py.typed` marker so type checkers see the inline annotations.
+- [x] Add `__all__` to `toolbelt.text` so it matches every other submodule and
+      `from toolbelt.text import *` doesn't leak `re`/`textwrap`/`unicodedata`.
