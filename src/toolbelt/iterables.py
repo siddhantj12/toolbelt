@@ -177,12 +177,15 @@ def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
     """Yield the leaf items of ``nested``, descending up to ``depth`` levels.
 
     An item is descended into only if it is iterable and not a ``str``,
-    ``bytes`` or ``Mapping`` — those are always yielded whole, never taken
-    apart. A ``dict`` is excluded along with ``str``/``bytes`` because
-    iterating one yields only its keys, silently dropping the values; without
-    this, a dict nested in ``nested`` would flatten into its keys and lose
-    its values entirely. Anything else that isn't iterable is also yielded
-    as-is. Raises ``ValueError`` if ``depth`` is negative.
+    ``bytes``, ``bytearray`` or ``Mapping`` — those are always yielded whole,
+    never taken apart. A ``dict`` is excluded along with the byte-string
+    types because iterating one yields only its keys, silently dropping the
+    values; without this, a dict nested in ``nested`` would flatten into its
+    keys and lose its values entirely. ``bytearray`` is excluded alongside
+    ``bytes`` so the two behave the same — without it, a ``bytearray`` would
+    be taken apart into its individual integer byte values instead of being
+    kept whole. Anything else that isn't iterable is also yielded as-is.
+    Raises ``ValueError`` if ``depth`` is negative.
 
         >>> list(flatten([1, [2, 3], [4, [5, 6]]]))
         [1, 2, 3, 4, [5, 6]]
@@ -192,6 +195,8 @@ def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
         ['ab', 'cd', 'ef']
         >>> list(flatten([1, {"a": 2}, [3]]))
         [1, {'a': 2}, 3]
+        >>> list(flatten([bytearray(b"ab"), [1, 2]]))
+        [bytearray(b'ab'), 1, 2]
     """
     if depth < 0:
         raise ValueError(f"depth must be at least 0, got {depth}")
@@ -200,7 +205,7 @@ def flatten(nested: Iterable[object], depth: int = 1) -> Iterator[object]:
         if (
             depth > 0
             and isinstance(item, Iterable)
-            and not isinstance(item, (str, bytes, Mapping))
+            and not isinstance(item, (str, bytes, bytearray, Mapping))
         ):
             yield from flatten(item, depth - 1)
         else:
