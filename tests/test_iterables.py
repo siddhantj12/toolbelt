@@ -255,6 +255,10 @@ class TestFlatten:
         nested = [{"a": 2}]
         assert list(flatten(nested, depth=5)) == [{"a": 2}]
 
+    def test_bytearrays_are_treated_as_atoms(self):
+        nested = [bytearray(b"ab"), [1, 2]]
+        assert list(flatten(nested)) == [bytearray(b"ab"), 1, 2]
+
     def test_empty_input_yields_nothing(self):
         assert list(flatten([])) == []
 
