@@ -49,7 +49,7 @@ _ANSI_ESCAPE = re.compile(
     r")"
 )
 
-_ACRONYM_BOUNDARY = re.compile(r"([A-Z]+)([A-Z][a-z])")
+_ACRONYM_BOUNDARY = re.compile(r"([A-Z]+)([A-Z][a-z]{2,})")
 _CASE_BOUNDARY = re.compile(r"([a-z0-9])([A-Z])")
 _WORD_SEPARATORS = re.compile(r"[\s_-]+")
 
@@ -204,6 +204,14 @@ def snake_case(text: str) -> str:
         'parse_http_response'
         >>> snake_case("already-snake_case Words")
         'already_snake_case_words'
+
+    A single trailing lowercase letter right after an acronym is kept as
+    part of it rather than split off as its own word, since in practice that
+    is almost always an ``-s`` plural rather than a genuine new word — so a
+    pluralized acronym stays intact:
+
+        >>> snake_case("exportPDFs")
+        'export_pdfs'
 
     ``""`` returns ``""``. Raises ``TypeError`` if ``text`` is not a ``str``.
     """

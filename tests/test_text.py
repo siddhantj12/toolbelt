@@ -209,6 +209,14 @@ class TestSnakeCase:
     def test_mixed_separators_normalise_to_underscore(self):
         assert snake_case("already-snake_case Words") == "already_snake_case_words"
 
+    def test_keeps_pluralized_acronym_together(self):
+        assert snake_case("exportPDFs") == "export_pdfs"
+        assert snake_case("loadURLs") == "load_urls"
+        assert snake_case("fetchAPIs") == "fetch_apis"
+
+    def test_pluralized_acronym_mid_word_still_splits_following_word(self):
+        assert snake_case("exportPDFsNow") == "export_pdfs_now"
+
     def test_empty_input_returns_empty_string(self):
         assert snake_case("") == ""
 
