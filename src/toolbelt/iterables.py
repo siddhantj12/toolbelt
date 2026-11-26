@@ -32,11 +32,22 @@ def batched(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
     The final batch is short when the input does not divide evenly. Works on
     any iterable, including generators, and never materialises more than one
     batch at a time.
+
+        >>> list(batched([1, 2, 3, 4, 5], 2))
+        [[1, 2], [3, 4], [5]]
+
+    Raises ``ValueError`` if ``size`` is less than 1. This check runs as soon
+    as ``batched()`` is called, before ``iterable`` is touched — a bad
+    ``size`` fails right away rather than only once the result is iterated,
+    which would otherwise happen if the whole function were written as a
+    single generator.
     """
     if size < 1:
         raise ValueError(f"size must be at least 1, got {size}")
+    return _batched(iterator=iter(iterable), size=size)
 
-    iterator = iter(iterable)
+
+def _batched(iterator: Iterator[T], size: int) -> Iterator[list[T]]:
     while batch := list(islice(iterator, size)):
         yield batch
 
