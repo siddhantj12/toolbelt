@@ -34,6 +34,12 @@ class TestBatched:
         with pytest.raises(ValueError):
             list(batched([1, 2], 0))
 
+    def test_size_below_one_raises_before_iteration_starts(self):
+        # A bad size must fail at the call site, not only once the result
+        # is consumed — otherwise the error surfaces far from the mistake.
+        with pytest.raises(ValueError):
+            batched([1, 2], 0)
+
 
 class TestDedupe:
     def test_removes_duplicates_preserving_order(self):
