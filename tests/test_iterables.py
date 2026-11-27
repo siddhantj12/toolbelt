@@ -212,6 +212,12 @@ class TestWindowed:
         with pytest.raises(ValueError):
             list(windowed([1, 2], 0))
 
+    def test_size_below_one_raises_before_iteration_starts(self):
+        # A bad size must fail at the call site, not only once the result
+        # is consumed — otherwise the error surfaces far from the mistake.
+        with pytest.raises(ValueError):
+            windowed([1, 2], 0)
+
 
 class TestInterleave:
     def test_round_robins_equal_length_inputs(self):
