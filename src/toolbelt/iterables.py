@@ -95,11 +95,19 @@ def windowed(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
 
         >>> list(windowed([1, 2, 3, 4], 2))
         [[1, 2], [2, 3], [3, 4]]
+
+    Raises ``ValueError`` if ``size`` is less than 1. This check runs as soon
+    as ``windowed()`` is called, before ``iterable`` is touched — a bad
+    ``size`` fails right away rather than only once the result is iterated,
+    which would otherwise happen if the whole function were written as a
+    single generator.
     """
     if size < 1:
         raise ValueError(f"size must be at least 1, got {size}")
+    return _windowed(iterator=iter(iterable), size=size)
 
-    iterator = iter(iterable)
+
+def _windowed(iterator: Iterator[T], size: int) -> Iterator[list[T]]:
     window: deque[T] = deque(islice(iterator, size), maxlen=size)
     if len(window) < size:
         return
